@@ -247,7 +247,7 @@ function ArrayNode({ data, keyName, isLast, indent }: JSONNodeProps) {
             ))}
           </div>
           <span style={{ paddingLeft: `${(indent + 0.5) * 1.2}rem` }}>
-            <span className="text-gray-500">{`]`}</span>
+            <span className="text-gray-500">{']'}</span>
           </span>
         </>
       )}
