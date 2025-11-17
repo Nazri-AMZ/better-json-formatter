@@ -176,7 +176,7 @@ function ObjectNode({ data, keyName, isLast, indent }: JSONNodeProps) {
         onClick={() => setIsExpanded(!isExpanded)}
       >
         {isExpanded ? <ChevronDown className="inline w-3 h-3" /> : <ChevronRight className="inline w-3 h-3" />}
-        {`{`}
+        {'{'}
       </span>
 
       {isExpanded && (
