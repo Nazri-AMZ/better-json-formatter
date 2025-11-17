@@ -255,7 +255,7 @@ function ArrayNode({ data, keyName, isLast, indent }: JSONNodeProps) {
       {!isExpanded && (
         <span className="text-gray-400">
           {' ... '}
-          <span className="text-gray-500">{`]`}</span>
+          <span className="text-gray-500">{']'}</span>
         </span>
       )}
 
