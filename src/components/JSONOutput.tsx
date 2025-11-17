@@ -261,67 +261,14 @@ function JSONContentDisplay({ jsonObject }: { jsonObject: ExtractedJSON }) {
   );
 }
 
-// Temporary placeholder components (we'll implement these next)
+// Import the actual components
+import BeautifiedJSON from '@/components/BeautifiedJSON';
+import TabularJSON from '@/components/TabularJSON';
+
 function BeautifiedJSONDisplay({ data }: { data: any }) {
-  const [copied, setCopied] = useState(false);
-
-  const handleCopy = async () => {
-    const text = JSON.stringify(data, null, 2);
-    try {
-      await navigator.clipboard.writeText(text);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
-    } catch (error) {
-      // Fallback
-    }
-  };
-
-  return (
-    <div className="relative">
-      <button
-        onClick={handleCopy}
-        className="absolute top-2 right-2 px-3 py-1 text-xs bg-gray-100 hover:bg-gray-200 rounded-md transition-colors"
-      >
-        {copied ? 'Copied!' : 'Copy'}
-      </button>
-      <pre className="bg-gray-900 text-gray-100 p-4 rounded-lg overflow-x-auto text-sm font-mono">
-        {JSON.stringify(data, null, 2)}
-      </pre>
-    </div>
-  );
+  return <BeautifiedJSON data={data} />;
 }
 
 function TabularJSONDisplay({ data }: { data: any }) {
-  // We'll implement proper tabular display next
-  const [copied, setCopied] = useState(false);
-
-  const handleCopy = async () => {
-    const text = JSON.stringify(data, null, 2);
-    try {
-      await navigator.clipboard.writeText(text);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
-    } catch (error) {
-      // Fallback
-    }
-  };
-
-  return (
-    <div className="relative">
-      <button
-        onClick={handleCopy}
-        className="absolute top-2 right-2 px-3 py-1 text-xs bg-gray-100 hover:bg-gray-200 rounded-md transition-colors"
-      >
-        {copied ? 'Copied!' : 'Copy'}
-      </button>
-      <div className="bg-gray-50 p-4 rounded-lg">
-        <p className="text-sm text-gray-600">
-          Tabular view will be implemented in the next step.
-        </p>
-        <pre className="mt-2 text-xs text-gray-500">
-          {JSON.stringify(data, null, 2)}
-        </pre>
-      </div>
-    </div>
-  );
+  return <TabularJSON data={data} />;
 }
