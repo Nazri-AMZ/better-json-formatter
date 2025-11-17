@@ -1,65 +1,158 @@
-import Image from "next/image";
+'use client';
+
+import { useState } from 'react';
+import { useJSONProcessor } from '@/hooks/useJSONProcessor';
+import JSONInput from '@/components/JSONInput';
+import JSONOutput from '@/components/JSONOutput';
+import { Sparkles, Code, FileJson, Github } from 'lucide-react';
 
 export default function Home() {
+  const {
+    inputText,
+    jsonObjects,
+    isProcessing,
+    error,
+    processJSON,
+    setInputText
+  } = useJSONProcessor();
+
+  const [searchTerm, setSearchTerm] = useState('');
+  const [filterType, setFilterType] = useState<'all' | 'valid' | 'invalid'>('all');
+
+  const handleProcess = () => {
+    processJSON(inputText);
+  };
+
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
+    <div className="min-h-screen bg-gray-50">
+      {/* Header */}
+      <header className="bg-white border-b border-gray-200">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex items-center justify-between h-16">
+            <div className="flex items-center gap-3">
+              <div className="flex items-center justify-center w-10 h-10 bg-blue-600 rounded-lg">
+                <FileJson className="w-6 h-6 text-white" />
+              </div>
+              <div>
+                <h1 className="text-xl font-semibold text-gray-900">
+                  JSON Beautifier & Displayer
+                </h1>
+                <p className="text-sm text-gray-500">
+                  Extract, beautify, and analyze JSON from any text
+                </p>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-4">
+              <a
+                href="https://github.com"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-2 px-3 py-2 text-sm text-gray-700 hover:text-gray-900 hover:bg-gray-100 rounded-md transition-colors"
+              >
+                <Github className="w-4 h-4" />
+                GitHub
+              </a>
+            </div>
+          </div>
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
+      </header>
+
+      {/* Main Content */}
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {/* Error Message */}
+        {error && (
+          <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg">
+            <div className="flex items-center gap-2">
+              <Code className="w-5 h-5 text-red-600" />
+              <p className="text-red-800 font-medium">Processing Error</p>
+            </div>
+            <p className="text-red-600 text-sm mt-1">{error}</p>
+          </div>
+        )}
+
+        {/* Side-by-side Layout */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 h-[calc(100vh-250px)]">
+          {/* Input Section */}
+          <div className="flex flex-col">
+            <JSONInput
+              value={inputText}
+              onChange={setInputText}
+              onProcess={handleProcess}
+              isProcessing={isProcessing}
             />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+          </div>
+
+          {/* Output Section */}
+          <div className="flex flex-col">
+            <JSONOutput
+              jsonObjects={jsonObjects}
+              searchTerm={searchTerm}
+              onSearchChange={setSearchTerm}
+              filterType={filterType}
+              onFilterChange={setFilterType}
+            />
+          </div>
         </div>
+
+        {/* Quick Examples */}
+        {jsonObjects.length === 0 && !inputText && (
+          <div className="mt-8">
+            <div className="flex items-center gap-2 mb-4">
+              <Sparkles className="w-5 h-5 text-blue-600" />
+              <h2 className="text-lg font-semibold text-gray-900">Quick Examples</h2>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              <ExampleCard
+                title="Simple JSON"
+                description="Basic object with different data types"
+                example={`{\n  "name": "John Doe",\n  "age": 30,\n  "active": true,\n  "tags": ["dev", "js"]\n}`}
+                onExampleSelect={setInputText}
+              />
+
+              <ExampleCard
+                title="Malformed JSON"
+                description="JSON with formatting errors (will be recovered)"
+                example={`{\n  "id": 123\n  "title": "Sample",\n  "data": [1, 2, 3,],\n  "status": "active"\n}`}
+                onExampleSelect={setInputText}
+              />
+
+              <ExampleCard
+                title="JSON in Logs"
+                description="Multiple JSON objects embedded in log text"
+                example={`[2024-01-01] Request: {"action": "login", "user": "john"}
+[2024-01-01] Response: {"status": "success", "token": "abc123"}`}
+                onExampleSelect={setInputText}
+              />
+            </div>
+          </div>
+        )}
       </main>
+    </div>
+  );
+}
+
+// Example Card Component
+interface ExampleCardProps {
+  title: string;
+  description: string;
+  example: string;
+  onExampleSelect: (example: string) => void;
+}
+
+function ExampleCard({ title, description, example, onExampleSelect }: ExampleCardProps) {
+  return (
+    <div className="bg-white border border-gray-200 rounded-lg p-4 hover:border-blue-300 hover:shadow-md transition-all cursor-pointer"
+         onClick={() => onExampleSelect(example)}>
+      <h3 className="font-medium text-gray-900 mb-1">{title}</h3>
+      <p className="text-sm text-gray-500 mb-3">{description}</p>
+      <pre className="text-xs bg-gray-50 p-2 rounded border border-gray-200 overflow-x-auto">
+        {example}
+      </pre>
+      <button className="mt-3 text-sm text-blue-600 hover:text-blue-700 font-medium">
+        Try this example →
+      </button>
     </div>
   );
 }
