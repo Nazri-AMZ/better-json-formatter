@@ -2,6 +2,8 @@
 
 import { ExtractedJSON } from '@/types/json';
 import { CheckCircle, AlertTriangle, XCircle, Search, Filter } from 'lucide-react';
+import BeautifiedJSON from '@/components/BeautifiedJSON';
+import TabularJSON from '@/components/TabularJSON';
 
 interface JSONOutputProps {
   jsonObjects: ExtractedJSON[];
