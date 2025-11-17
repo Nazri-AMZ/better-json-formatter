@@ -263,10 +263,6 @@ function JSONContentDisplay({ jsonObject }: { jsonObject: ExtractedJSON }) {
   );
 }
 
-// Import the actual components
-import BeautifiedJSON from '@/components/BeautifiedJSON';
-import TabularJSON from '@/components/TabularJSON';
-
 function BeautifiedJSONDisplay({ data }: { data: any }) {
   return <BeautifiedJSON data={data} />;
 }
