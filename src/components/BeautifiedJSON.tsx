@@ -163,8 +163,8 @@ function ObjectNode({ data, keyName, isLast, indent }: JSONNodeProps) {
   if (!hasEntries) {
     return (
       <span>
-        <span className="text-gray-500">{</span>
-        <span className="text-gray-500">}</span>
+        <span className="text-gray-500">{'{'}</span>
+        <span className="text-gray-500">{'}'}</span>
       </span>
     );
   }
