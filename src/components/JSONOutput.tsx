@@ -82,6 +82,30 @@ export default function JSONOutput({
     }));
   };
 
+  // Card expansion handlers
+  const expandAllCards = () => {
+    const allExpanded: { [key: string]: boolean } = {};
+    jsonObjects.forEach(obj => {
+      allExpanded[obj.id] = true;
+    });
+    setCardExpansionState(allExpanded);
+  };
+
+  const closeAllCards = () => {
+    const allCollapsed: { [key: string]: boolean } = {};
+    jsonObjects.forEach(obj => {
+      allCollapsed[obj.id] = false;
+    });
+    setCardExpansionState(allCollapsed);
+  };
+
+  const updateCardExpansion = (cardId: string, isExpanded: boolean) => {
+    setCardExpansionState(prev => ({
+      ...prev,
+      [cardId]: isExpanded
+    }));
+  };
+
   const validCount = jsonObjects.filter((obj) => obj.isValid).length;
   const invalidCount = jsonObjects.length - validCount;
 
