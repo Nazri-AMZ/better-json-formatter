@@ -542,7 +542,7 @@ function JSONContentDisplay({
 
       {/* Content */}
       {viewMode === "beautified" ? (
-        <BeautifiedJSONDisplay data={jsonObject.parsedData} />
+        <BeautifiedJSONDisplay data={jsonObject.parsedData} globalExpandState={globalExpandState} />
       ) : (
         <TabularJSONDisplay data={jsonObject.parsedData} />
       )}
