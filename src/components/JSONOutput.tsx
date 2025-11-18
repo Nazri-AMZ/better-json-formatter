@@ -115,6 +115,7 @@ export default function JSONOutput({
                 key={jsonObject.id}
                 jsonObject={jsonObject}
                 index={jsonObjects.indexOf(jsonObject) + 1}
+                moliMode={moliMode}
               />
             ))}
           </div>
