@@ -318,7 +318,7 @@ function JSONObjectCard({ jsonObject, index, originalIndex, moliMode, onOpenPopu
       {/* Header */}
       <div
         className="flex items-center justify-between p-3 bg-gray-50 cursor-pointer hover:bg-gray-100 transition-colors"
-        onClick={() => setIsExpanded(!isExpanded)}
+        onClick={() => onToggleExpansion(!isExpanded)}
       >
         <div className="flex items-center gap-3">
           <button className="flex items-center justify-center w-6 h-6 text-gray-400 hover:text-gray-600">
