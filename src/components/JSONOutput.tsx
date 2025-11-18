@@ -1,7 +1,7 @@
 'use client';
 
-import { ExtractedJSON } from '@/types/json';
-import { CheckCircle, AlertTriangle, XCircle, Search, Filter } from 'lucide-react';
+import { ExtractedJSON, MOLILogType } from '@/types/json';
+import { CheckCircle, AlertTriangle, XCircle, Search, Filter, Activity, Clock, Server, User } from 'lucide-react';
 import BeautifiedJSON from '@/components/BeautifiedJSON';
 import TabularJSON from '@/components/TabularJSON';
 
@@ -11,6 +11,7 @@ interface JSONOutputProps {
   onSearchChange: (term: string) => void;
   filterType: 'all' | 'valid' | 'invalid';
   onFilterChange: (type: 'all' | 'valid' | 'invalid') => void;
+  moliMode: boolean;
 }
 
 export default function JSONOutput({
