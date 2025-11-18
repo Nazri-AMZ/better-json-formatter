@@ -210,8 +210,15 @@ function JSONObjectCard({ jsonObject, index, moliMode }: JSONObjectCardProps) {
           </button>
 
           <span className="font-medium text-gray-900">
-            JSON #{index}
+            {moliMode ? 'MOLI Log' : 'JSON'} #{index}
           </span>
+
+          {moliMode && jsonObject.moliMetadata && (
+            <div className={`flex items-center gap-1 px-2 py-1 text-xs font-medium rounded-full border ${getMOLILogTypeColor()}`}>
+              {getMOLILogTypeIcon()}
+              <span>{getMOLILogTypeText()}</span>
+            </div>
+          )}
 
           <div className={`flex items-center gap-1 px-2 py-1 text-xs font-medium rounded-full border ${getStatusColor()}`}>
             {getStatusIcon()}
@@ -222,6 +229,13 @@ function JSONObjectCard({ jsonObject, index, moliMode }: JSONObjectCardProps) {
             <div className="flex items-center gap-1 px-2 py-1 text-xs font-medium rounded-full text-yellow-600 bg-yellow-50 border border-yellow-200">
               <AlertTriangle className="w-3 h-3" />
               <span>{jsonObject.warnings.length} warnings</span>
+            </div>
+          )}
+
+          {moliMode && jsonObject.moliMetadata?.isIncomplete && (
+            <div className="flex items-center gap-1 px-2 py-1 text-xs font-medium rounded-full text-orange-600 bg-orange-50 border border-orange-200">
+              <AlertTriangle className="w-3 h-3" />
+              <span>Recovered</span>
             </div>
           )}
         </div>
