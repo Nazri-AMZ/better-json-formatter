@@ -36,7 +36,7 @@ export function useJSONProcessor() {
       // Simulate processing delay for better UX
       await new Promise(resolve => setTimeout(resolve, 500));
 
-      const jsonObjects = processor.extractJSONObjects(inputText);
+      const jsonObjects = processor.extractJSONObjects(inputText, moliMode);
 
       if (jsonObjects.length === 0) {
         setState(prev => ({
