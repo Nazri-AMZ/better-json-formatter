@@ -241,4 +241,175 @@ export class JSONProcessor {
       return success;
     }
   }
+
+  /**
+   * Extract JSON objects from MOLI logs specifically
+   */
+  private extractMOLILogs(text: string): ExtractedJSON[] {
+    const jsonObjects: ExtractedJSON[] = [];
+    const lines = text.split('\n');
+
+    let currentJsonText = '';
+    let braceCount = 0;
+    let bracketCount = 0;
+    let inJsonString = false;
+    let startIndex = -1;
+    let lineIndex = 0;
+
+    for (let i = 0; i < lines.length; i++) {
+      const line = lines[i].trim();
+
+      // Skip empty lines and lines that are clearly text separators
+      if (!line || line.match(/^(request|response)\s+\d+:/i)) {
+        // If we have accumulated JSON text, process it
+        if (currentJsonText.trim()) {
+          const processedObject = this.processMOLIJsonText(currentJsonText, startIndex);
+          if (processedObject) {
+            jsonObjects.push(processedObject);
+          }
+          currentJsonText = '';
+          braceCount = 0;
+          bracketCount = 0;
+          inJsonString = false;
+          startIndex = -1;
+        }
+        continue;
+      }
+
+      // Check if line starts a JSON object
+      if (line.includes('{') && braceCount === 0 && bracketCount === 0) {
+        if (startIndex === -1) {
+          startIndex = text.indexOf(line, lineIndex);
+        }
+      }
+
+      // Track brace and bracket counts to find complete JSON objects
+      for (let j = 0; j < line.length; j++) {
+        const char = line[j];
+
+        if (char === '"' && (j === 0 || line[j-1] !== '\\')) {
+          inJsonString = !inJsonString;
+        }
+
+        if (!inJsonString) {
+          if (char === '{') braceCount++;
+          else if (char === '}') braceCount--;
+          else if (char === '[') bracketCount++;
+          else if (char === ']') bracketCount--;
+        }
+      }
+
+      currentJsonText += (currentJsonText ? ' ' : '') + line;
+      lineIndex += lines[i].length + 1; // +1 for newline
+
+      // If we've closed all braces and brackets, we have a complete JSON object
+      if (braceCount === 0 && bracketCount === 0 && currentJsonText.trim()) {
+        const processedObject = this.processMOLIJsonText(currentJsonText, startIndex);
+        if (processedObject) {
+          jsonObjects.push(processedObject);
+        }
+        currentJsonText = '';
+        braceCount = 0;
+        bracketCount = 0;
+        inJsonString = false;
+        startIndex = -1;
+      }
+    }
+
+    // Process any remaining JSON text
+    if (currentJsonText.trim()) {
+      const processedObject = this.processMOLIJsonText(currentJsonText, startIndex);
+      if (processedObject) {
+        jsonObjects.push(processedObject);
+      }
+    }
+
+    return jsonObjects;
+  }
+
+  /**
+   * Process individual JSON text for MOLI metadata
+   */
+  private processMOLIJsonText(jsonText: string, startIndex: number): ExtractedJSON | null {
+    if (!jsonText.trim()) return null;
+
+    // Clean up patterns like "response 1: {{JSON}}" to extract just the JSON
+    let cleanedText = jsonText;
+
+    // Remove prefixes like "response 1:" or "request 2:"
+    cleanedText = cleanedText.replace(/^(request|response)\s+\d+:\s*/i, '');
+
+    // Remove extra braces around JSON like {{JSON}} -> {JSON}
+    cleanedText = cleanedText.replace(/^\s*\{\{/, '{').replace(/\}\}\s*$/, '}');
+
+    const validationResult = this.validateAndRecoverJSON(cleanedText);
+
+    // Generate MOLI metadata
+    const moliMetadata = this.generateMOLIMetadata(validationResult.data, cleanedText);
+
+    return {
+      id: `moli-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+      originalText: jsonText,
+      recoveredText: validationResult.recoveredText,
+      parsedData: validationResult.data,
+      isValid: validationResult.isValid,
+      warnings: validationResult.warnings,
+      startIndex: startIndex >= 0 ? startIndex : 0,
+      endIndex: startIndex >= 0 ? startIndex + jsonText.length : jsonText.length,
+      moliMetadata
+    };
+  }
+
+  /**
+   * Generate MOLI metadata from parsed JSON data
+   */
+  private generateMOLIMetadata(data: any, originalText: string): MOLIMetadata {
+    let logType = MOLILogType.UNKNOWN;
+    let service: string | undefined;
+    let controller: string | undefined;
+    let timestamp: string | undefined;
+    let traceId: string | undefined;
+    let isIncomplete = false;
+
+    // Extract metadata from parsed JSON if it's a valid MOLI log
+    if (data && typeof data === 'object') {
+      // Determine if it's a request or response
+      if (data.message) {
+        if (data.message.toLowerCase() === 'request') {
+          logType = MOLILogType.REQUEST;
+        } else if (data.message.toLowerCase() === 'response') {
+          logType = MOLILogType.RESPONSE;
+        }
+      }
+
+      // Extract other metadata fields
+      service = data.service;
+      timestamp = data.timestamp;
+      traceId = data.xray_trace_id;
+
+      // Extract controller from globalContext
+      if (data.globalContext && data.globalContext.controller) {
+        controller = data.globalContext.controller;
+      }
+    }
+
+    // Check if the original text suggests incompleteness
+    if (originalText.includes('...') || originalText.match(/\{$/) || originalText.match(/\{$/)) {
+      isIncomplete = true;
+    }
+
+    // Check if JSON parsing failed or data is null/undefined
+    if (!data || data === null) {
+      isIncomplete = true;
+    }
+
+    return {
+      logType,
+      service,
+      controller,
+      timestamp,
+      traceId,
+      isIncomplete
+    };
+  }
 }
