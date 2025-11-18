@@ -219,7 +219,10 @@ export default function JSONOutput({
                 key={jsonObject.id}
                 jsonObject={jsonObject}
                 index={jsonObjects.indexOf(jsonObject) + 1}
+                originalIndex={jsonObjects.indexOf(jsonObject)}
                 moliMode={moliMode}
+                globalExpandState={globalState}
+                onOpenPopup={openPopup}
               />
             ))}
           </div>
