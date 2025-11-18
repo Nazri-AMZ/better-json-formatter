@@ -5,47 +5,6 @@ import { TabularRow } from '@/types/json';
 import { JSONProcessor } from '@/lib/jsonProcessor';
 import { Copy, Download, Search, ArrowUpDown, Check } from 'lucide-react';
 
-// Hover Copy Cell Component
-function HoverCopyCell({ value, children, className }: { value: any; children: React.ReactNode; className?: string }) {
-  const [showCopy, setShowCopy] = useState(false);
-  const [copied, setCopied] = useState(false);
-
-  const handleCopy = async () => {
-    try {
-      const content = typeof value === 'object' ? JSON.stringify(value, null, 2) : String(value);
-      await navigator.clipboard.writeText(content);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 1500);
-    } catch (error) {
-      console.error('Failed to copy:', error);
-    }
-  };
-
-  return (
-    <div
-      className={`relative ${className || ''}`}
-      onMouseEnter={() => setShowCopy(true)}
-      onMouseLeave={() => setShowCopy(false)}
-    >
-      {showCopy && (
-        <button
-          onClick={handleCopy}
-          className="absolute -top-1 -right-1 p-1 bg-blue-600 text-white rounded hover:bg-blue-700 z-10"
-          title="Click to copy value"
-        >
-          <Copy className="w-3 h-3" />
-        </button>
-      )}
-      {copied && (
-        <span className="absolute -top-6 left-0 text-green-400 text-xs bg-gray-800 px-1 rounded whitespace-nowrap z-10">
-          Copied!
-        </span>
-      )}
-      {children}
-    </div>
-  );
-}
-
 interface TabularJSONProps {
   data: any;
   onCopy?: () => void;
