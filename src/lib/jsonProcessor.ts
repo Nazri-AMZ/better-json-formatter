@@ -93,22 +93,58 @@ export class JSONProcessor {
    * Attempt to recover common JSON formatting issues
    */
   private recoverJSON(jsonString: string): { text: string; warnings: string[] } {
-    let recovered = jsonString;
+    let recovered = jsonString.trim();
     const warnings: string[] = [];
 
-    // Remove trailing commas
+    // Handle single-line JSON that might be wrapped incorrectly
+    if (recovered.startsWith('{') && !recovered.endsWith('}')) {
+      // Try to find the complete JSON object by counting braces
+      let braceCount = 0;
+      let inString = false;
+      let endPos = recovered.length;
+
+      for (let i = 0; i < recovered.length; i++) {
+        const char = recovered[i];
+        if (char === '"' && (i === 0 || recovered[i-1] !== '\\')) {
+          inString = !inString;
+        }
+        if (!inString) {
+          if (char === '{') braceCount++;
+          else if (char === '}') {
+            braceCount--;
+            if (braceCount === 0) {
+              endPos = i + 1;
+              break;
+            }
+          }
+        }
+      }
+
+      if (braceCount > 0) {
+        recovered += '}'.repeat(braceCount);
+        warnings.push('Added missing closing braces');
+      } else if (endPos < recovered.length) {
+        recovered = recovered.substring(0, endPos);
+        warnings.push('Trimmed incomplete JSON');
+      }
+    }
+
+    // Remove trailing commas before closing braces/brackets
     if (/,(\s*[}\]])/g.test(recovered)) {
       recovered = recovered.replace(/,(\s*[}\]])/g, '$1');
       warnings.push('Removed trailing commas');
     }
 
-    // Add missing commas between object properties
+    // Add missing commas between object properties (more aggressive)
     recovered = recovered.replace(/"}\s*"/g, '", "');
+    recovered = recovered.replace(/"\s*\n\s*"/g, '", "');
+    recovered = recovered.replace(/(\w)\s*"(?=\s*:)/g, '$1, "'); // Between property and quoted value
+
+    // Fix array-to-object transitions
     recovered = recovered.replace(/]\s*{/g, ', {');
     recovered = recovered.replace(/}\s*\[/g, ', [');
-    recovered = recovered.replace(/"\s*\n\s*"/g, '", "');
 
-    // Fix unbalanced quotes (basic attempt)
+    // Fix unbalanced quotes (more robust)
     const openBraces = (recovered.match(/\{/g) || []).length;
     const closeBraces = (recovered.match(/\}/g) || []).length;
     const openBrackets = (recovered.match(/\[/g) || []).length;
@@ -123,8 +159,8 @@ export class JSONProcessor {
       warnings.push('Added missing closing brackets');
     }
 
-    // Fix unquoted property names
-    recovered = recovered.replace(/(\w+):/g, '"$1":');
+    // Fix unquoted property names (more careful to avoid affecting values)
+    recovered = recovered.replace(/(\w+)(?=\s*:)/g, '"$1"');
 
     return { text: recovered, warnings };
   }
