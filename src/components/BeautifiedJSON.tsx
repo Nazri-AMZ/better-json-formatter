@@ -82,7 +82,7 @@ export default function BeautifiedJSON({ data, indent = 2, onCopy, onDownload, g
 
       {/* JSON Display */}
       <div className="bg-gray-900 text-gray-100 p-4 rounded-lg overflow-x-auto text-sm font-mono">
-        <JSONNode data={data} indent={0} isLast={true} />
+        <JSONNode data={data} indent={0} isLast={true} globalExpandState={globalExpandState} />
       </div>
     </div>
   );
