@@ -126,8 +126,17 @@ export default function JSONInput({
       {/* Tips */}
       <div className="px-4 pb-4 text-xs text-gray-500">
         <p>
-          <strong>Tips:</strong> Press Ctrl+Enter to process • Supports multiple JSON objects •
-          Recovers from common formatting errors • Handles JSON embedded in logs
+          {moliMode ? (
+            <>
+              <strong>MOLI Tips:</strong> Press Ctrl+Enter to process • Each log entry will be processed separately •
+              Recovers incomplete JSON objects • Handles mixed content with text separators
+            </>
+          ) : (
+            <>
+              <strong>Tips:</strong> Press Ctrl+Enter to process • Supports multiple JSON objects •
+              Recovers from common formatting errors • Handles JSON embedded in logs
+            </>
+          )}
         </p>
       </div>
     </div>
