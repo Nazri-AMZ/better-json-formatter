@@ -421,11 +421,9 @@ function JSONObjectCard({ jsonObject, index, originalIndex, moliMode, onOpenPopu
 function JSONContentDisplay({
   jsonObject,
   moliMode,
-  globalExpandState,
 }: {
   jsonObject: ExtractedJSON;
   moliMode: boolean;
-  globalExpandState?: 'individual' | 'expanded' | 'collapsed';
 }) {
   const [viewMode, setViewMode] = useState<"beautified" | "tabular">(
     "beautified"
