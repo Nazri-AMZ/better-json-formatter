@@ -11,9 +11,12 @@ import {
   Clock,
   Server,
   User,
+  Maximize2,
 } from "lucide-react";
 import BeautifiedJSON from "@/components/BeautifiedJSON";
 import TabularJSON from "@/components/TabularJSON";
+import FullscreenJSONPopup from "@/components/FullscreenJSONPopup";
+import { useGlobalExpandControls } from "@/hooks/useGlobalExpandControls";
 
 interface JSONOutputProps {
   jsonObjects: ExtractedJSON[];
