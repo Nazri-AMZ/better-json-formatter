@@ -17,7 +17,7 @@ interface JSONNodeProps {
   indent: number;
 }
 
-export default function BeautifiedJSON({ data, indent = 2, onCopy, onDownload, globalExpandState }: BeautifiedJSONProps) {
+export default function BeautifiedJSON({ data, indent = 2, onCopy, onDownload }: BeautifiedJSONProps) {
   const [copied, setCopied] = useState(false);
 
   const handleCopy = async () => {
