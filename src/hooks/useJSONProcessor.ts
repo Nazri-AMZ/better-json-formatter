@@ -112,6 +112,8 @@ export function useJSONProcessor() {
 
   return {
     ...state,
+    moliMode,
+    setMoliMode,
     processJSON,
     setInputText,
     clearResults,
