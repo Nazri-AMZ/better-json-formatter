@@ -5,8 +5,12 @@ export class JSONProcessor {
   /**
    * Extract all JSON objects from text input
    */
-  extractJSONObjects(text: string): ExtractedJSON[] {
+  extractJSONObjects(text: string, moliMode: boolean = false): ExtractedJSON[] {
     const jsonObjects: ExtractedJSON[] = [];
+
+    if (moliMode) {
+      return this.extractMOLILogs(text);
+    }
 
     // Pattern to find JSON objects and arrays in text
     const jsonPatterns = [
