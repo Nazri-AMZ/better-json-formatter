@@ -11,6 +11,7 @@ export function useJSONProcessor() {
     error: null,
     inputText: ''
   });
+  const [moliMode, setMoliMode] = useState(false);
 
   const processor = new JSONProcessor();
 
