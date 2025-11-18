@@ -136,27 +136,27 @@ export default function TabularJSON({ data, onCopy, onDownload }: TabularJSONPro
         <div className="flex gap-2">
           <button
             onClick={handleCopyTable}
-            className="flex items-center gap-1 px-3 py-1 text-sm bg-white hover:bg-gray-50 border border-gray-300 rounded-md transition-colors"
+            className="flex items-center gap-1 px-3 py-1 text-sm font-medium text-gray-900 bg-white hover:bg-gray-50 border border-gray-300 rounded-md transition-colors shadow-sm hover:shadow-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             title="Copy as CSV"
           >
             {copied ? (
               <>
-                <Check className="w-3 h-3" />
+                <Check className="w-3 h-3 text-green-600" />
                 Copied!
               </>
             ) : (
               <>
-                <Copy className="w-3 h-3" />
+                <Copy className="w-3 h-3 text-gray-700" />
                 Copy CSV
               </>
             )}
           </button>
           <button
             onClick={handleDownloadCSV}
-            className="flex items-center gap-1 px-3 py-1 text-sm bg-white hover:bg-gray-50 border border-gray-300 rounded-md transition-colors"
+            className="flex items-center gap-1 px-3 py-1 text-sm font-medium text-gray-900 bg-white hover:bg-gray-50 border border-gray-300 rounded-md transition-colors shadow-sm hover:shadow-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             title="Download as CSV"
           >
-            <Download className="w-3 h-3" />
+            <Download className="w-3 h-3 text-gray-700" />
             Download CSV
           </button>
         </div>
