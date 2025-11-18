@@ -313,7 +313,7 @@ function JSONObjectCard({ jsonObject, index, moliMode }: JSONObjectCardProps) {
 import { useState } from 'react';
 
 // Content Display Component
-function JSONContentDisplay({ jsonObject }: { jsonObject: ExtractedJSON }) {
+function JSONContentDisplay({ jsonObject, moliMode }: { jsonObject: ExtractedJSON; moliMode: boolean }) {
   const [viewMode, setViewMode] = useState<'beautified' | 'tabular'>('beautified');
 
   if (!jsonObject.parsedData) {
