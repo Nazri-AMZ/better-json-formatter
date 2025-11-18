@@ -124,6 +124,11 @@ export default function JSONOutput({
           <div className="flex items-center gap-2 text-sm">
             <span className="text-gray-600">
               {jsonObjects.length} JSON objects found
+              {searchTerm && (
+                <span className="text-blue-600 ml-1">
+                  ({filteredObjects.length} match{filteredObjects.length !== 1 ? 'es' : ''})
+                </span>
+              )}
             </span>
             {validCount > 0 && (
               <div className="flex items-center gap-1 text-green-600">
