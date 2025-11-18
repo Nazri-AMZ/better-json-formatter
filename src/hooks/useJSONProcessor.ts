@@ -38,6 +38,15 @@ export function useJSONProcessor() {
 
       const jsonObjects = processor.extractJSONObjects(inputText, moliMode);
 
+      // Test the parsed JSON by logging it for debugging
+      if (jsonObjects.length > 0) {
+        console.log('JSON parsing results:', {
+          count: jsonObjects.length,
+          firstObjectKeys: jsonObjects[0]?.parsedData ? Object.keys(jsonObjects[0].parsedData) : 'null',
+          firstObjectValid: jsonObjects[0]?.isValid || false
+        });
+      }
+
       if (jsonObjects.length === 0) {
         setState(prev => ({
           ...prev,
