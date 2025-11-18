@@ -52,11 +52,18 @@ export default function JSONInput({
       <div className="flex items-center justify-between p-4 border-b border-gray-200">
         <div className="flex items-center gap-2">
           <FileText className="w-5 h-5 text-gray-600" />
-          <h3 className="font-semibold text-gray-900">Input</h3>
+          <h3 className="font-semibold text-gray-900">
+            Input {moliMode && <span className="text-blue-600">(MOLI Mode)</span>}
+          </h3>
         </div>
         <div className="flex items-center gap-4 text-sm text-gray-500">
           <span>{lineCount} lines</span>
           <span>{charCount.toLocaleString()} chars</span>
+          {moliMode && (
+            <span className="px-2 py-1 text-xs font-medium bg-blue-100 text-blue-700 rounded-full">
+              MOLI Active
+            </span>
+          )}
         </div>
       </div>
 
