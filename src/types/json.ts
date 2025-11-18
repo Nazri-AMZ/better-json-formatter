@@ -7,6 +7,22 @@ export interface ExtractedJSON {
   warnings: string[];
   startIndex: number;
   endIndex: number;
+  moliMetadata?: MOLIMetadata;
+}
+
+export enum MOLILogType {
+  REQUEST = 'request',
+  RESPONSE = 'response',
+  UNKNOWN = 'unknown'
+}
+
+export interface MOLIMetadata {
+  logType: MOLILogType;
+  service?: string;
+  controller?: string;
+  timestamp?: string;
+  traceId?: string;
+  isIncomplete: boolean;
 }
 
 export interface TabularRow {
