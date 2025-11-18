@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { ExtractedJSON, MOLILogType } from "@/types/json";
 import {
   CheckCircle,
@@ -11,9 +12,11 @@ import {
   Clock,
   Server,
   User,
+  Maximize2,
 } from "lucide-react";
 import BeautifiedJSON from "@/components/BeautifiedJSON";
 import TabularJSON from "@/components/TabularJSON";
+import FullscreenJSONPopup from "@/components/FullscreenJSONPopup";
 
 interface JSONOutputProps {
   jsonObjects: ExtractedJSON[];
@@ -32,6 +35,17 @@ export default function JSONOutput({
   onFilterChange,
   moliMode,
 }: JSONOutputProps) {
+  // Popup state management
+  const [popupState, setPopupState] = useState({
+    isOpen: false,
+    currentIndex: 0
+  });
+
+  // Card expansion state management
+  const [cardExpansionState, setCardExpansionState] = useState<{
+    [key: string]: boolean;
+  }>({});
+
   // Filter JSON objects based on selected filter
   const filteredObjects = jsonObjects.filter((obj) => {
     if (filterType === "valid") return obj.isValid;
@@ -39,11 +53,65 @@ export default function JSONOutput({
     return true;
   });
 
+  // Popup handlers
+  const openPopup = (index: number) => {
+    setPopupState({
+      isOpen: true,
+      currentIndex: index
+    });
+  };
+
+  const closePopup = () => {
+    setPopupState({
+      isOpen: false,
+      currentIndex: 0
+    });
+  };
+
+  const goToPrevious = () => {
+    setPopupState(prev => ({
+      ...prev,
+      currentIndex: Math.max(0, prev.currentIndex - 1)
+    }));
+  };
+
+  const goToNext = () => {
+    setPopupState(prev => ({
+      ...prev,
+      currentIndex: Math.min(jsonObjects.length - 1, prev.currentIndex + 1)
+    }));
+  };
+
+  // Card expansion handlers
+  const expandAllCards = () => {
+    const allExpanded: { [key: string]: boolean } = {};
+    jsonObjects.forEach(obj => {
+      allExpanded[obj.id] = true;
+    });
+    setCardExpansionState(allExpanded);
+  };
+
+  const closeAllCards = () => {
+    const allCollapsed: { [key: string]: boolean } = {};
+    jsonObjects.forEach(obj => {
+      allCollapsed[obj.id] = false;
+    });
+    setCardExpansionState(allCollapsed);
+  };
+
+  const updateCardExpansion = (cardId: string, isExpanded: boolean) => {
+    setCardExpansionState(prev => ({
+      ...prev,
+      [cardId]: isExpanded
+    }));
+  };
+
   const validCount = jsonObjects.filter((obj) => obj.isValid).length;
   const invalidCount = jsonObjects.length - validCount;
 
   return (
-    <div className="flex flex-col h-full bg-white rounded-lg border border-gray-200">
+    <>
+      <div className="flex flex-col h-full bg-white rounded-lg border border-gray-200">
       {/* Header */}
       <div className="flex items-center justify-between p-4 border-b border-gray-200 flex-shrink-0">
         <div className="flex items-center gap-3">
@@ -103,6 +171,24 @@ export default function JSONOutput({
             <option value="invalid">Invalid ({invalidCount})</option>
           </select>
         </div>
+
+        {/* Expand/Close All Cards Controls */}
+        <div className="flex items-center gap-2 border-l border-gray-200 pl-3">
+          <button
+            onClick={expandAllCards}
+            className="text-xs px-2 py-1 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded transition-colors"
+            title="Expand all JSON cards"
+          >
+            Expand All
+          </button>
+          <button
+            onClick={closeAllCards}
+            className="text-xs px-2 py-1 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded transition-colors"
+            title="Close all JSON cards"
+          >
+            Close All
+          </button>
+        </div>
       </div>
 
       {/* JSON Objects List */}
@@ -131,13 +217,30 @@ export default function JSONOutput({
                 key={jsonObject.id}
                 jsonObject={jsonObject}
                 index={jsonObjects.indexOf(jsonObject) + 1}
+                originalIndex={jsonObjects.indexOf(jsonObject)}
                 moliMode={moliMode}
+                onOpenPopup={openPopup}
+                isExpanded={cardExpansionState[jsonObject.id] !== false} // Default to expanded if not set
+                onToggleExpansion={(isExpanded) => updateCardExpansion(jsonObject.id, isExpanded)}
               />
             ))}
           </div>
         )}
       </div>
-    </div>
+      </div>
+
+      {/* Fullscreen Popup */}
+      <FullscreenJSONPopup
+        jsonObject={jsonObjects[popupState.currentIndex] || null}
+        allObjects={jsonObjects}
+        currentIndex={popupState.currentIndex}
+        isOpen={popupState.isOpen}
+        onClose={closePopup}
+        onPrevious={goToPrevious}
+        onNext={goToNext}
+        moliMode={moliMode}
+      />
+    </>
   );
 }
 
@@ -145,11 +248,14 @@ export default function JSONOutput({
 interface JSONObjectCardProps {
   jsonObject: ExtractedJSON;
   index: number;
+  originalIndex: number;
   moliMode: boolean;
+  onOpenPopup: (index: number) => void;
+  isExpanded: boolean;
+  onToggleExpansion: (isExpanded: boolean) => void;
 }
 
-function JSONObjectCard({ jsonObject, index, moliMode }: JSONObjectCardProps) {
-  const [isExpanded, setIsExpanded] = useState(true);
+function JSONObjectCard({ jsonObject, index, originalIndex, moliMode, onOpenPopup, isExpanded, onToggleExpansion }: JSONObjectCardProps) {
 
   const getStatusColor = () => {
     if (jsonObject.isValid)
@@ -212,7 +318,7 @@ function JSONObjectCard({ jsonObject, index, moliMode }: JSONObjectCardProps) {
       {/* Header */}
       <div
         className="flex items-center justify-between p-3 bg-gray-50 cursor-pointer hover:bg-gray-100 transition-colors"
-        onClick={() => setIsExpanded(!isExpanded)}
+        onClick={() => onToggleExpansion(!isExpanded)}
       >
         <div className="flex items-center gap-3">
           <button className="flex items-center justify-center w-6 h-6 text-gray-400 hover:text-gray-600">
@@ -269,6 +375,18 @@ function JSONObjectCard({ jsonObject, index, moliMode }: JSONObjectCardProps) {
         </div>
 
         <div className="flex items-center gap-2 text-sm text-gray-500">
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              onOpenPopup(originalIndex);
+            }}
+            className="flex items-center gap-1 px-2 py-1 text-xs bg-blue-600 text-white hover:bg-blue-700 rounded transition-colors"
+            title="Open in fullscreen"
+          >
+            <Maximize2 className="w-3 h-3" />
+            Fullscreen
+          </button>
+          <span>•</span>
           <span>
             Position: {jsonObject.startIndex}-{jsonObject.endIndex}
           </span>
@@ -348,9 +466,6 @@ function JSONObjectCard({ jsonObject, index, moliMode }: JSONObjectCardProps) {
     </div>
   );
 }
-
-// Import useState
-import { useState } from "react";
 
 // Content Display Component
 function JSONContentDisplay({
