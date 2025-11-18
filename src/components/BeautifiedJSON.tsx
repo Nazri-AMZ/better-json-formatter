@@ -1,13 +1,15 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { ChevronRight, ChevronDown, Copy, Download, Check } from 'lucide-react';
+import { GlobalExpandState } from '@/hooks/useGlobalExpandControls';
 
 interface BeautifiedJSONProps {
   data: any;
   indent?: number;
   onCopy?: () => void;
   onDownload?: () => void;
+  globalExpandState?: GlobalExpandState;
 }
 
 interface JSONNodeProps {
@@ -15,6 +17,7 @@ interface JSONNodeProps {
   keyName?: string;
   isLast: boolean;
   indent: number;
+  globalExpandState?: GlobalExpandState;
 }
 
 export default function BeautifiedJSON({ data, indent = 2, onCopy, onDownload }: BeautifiedJSONProps) {
