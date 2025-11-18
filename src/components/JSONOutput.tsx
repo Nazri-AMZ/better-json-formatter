@@ -248,7 +248,10 @@ export default function JSONOutput({
 interface JSONObjectCardProps {
   jsonObject: ExtractedJSON;
   index: number;
+  originalIndex: number;
   moliMode: boolean;
+  globalExpandState?: 'individual' | 'expanded' | 'collapsed';
+  onOpenPopup: (index: number) => void;
 }
 
 function JSONObjectCard({ jsonObject, index, moliMode }: JSONObjectCardProps) {
