@@ -52,27 +52,27 @@ export default function BeautifiedJSON({ data, indent = 2, onCopy, onDownload }:
       <div className="absolute top-2 right-2 flex gap-2 z-10">
         <button
           onClick={handleCopy}
-          className="flex items-center gap-1 px-3 py-1 text-xs bg-white hover:bg-gray-50 border border-gray-300 rounded-md transition-colors shadow-sm"
+          className="flex items-center gap-1 px-3 py-1 text-xs font-medium text-gray-900 bg-white hover:bg-gray-50 border border-gray-300 rounded-md transition-colors shadow-md hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
           title="Copy to clipboard"
         >
           {copied ? (
             <>
-              <Check className="w-3 h-3" />
+              <Check className="w-3 h-3 text-green-600" />
               Copied!
             </>
           ) : (
             <>
-              <Copy className="w-3 h-3" />
+              <Copy className="w-3 h-3 text-gray-700" />
               Copy
             </>
           )}
         </button>
         <button
           onClick={handleDownload}
-          className="flex items-center gap-1 px-3 py-1 text-xs bg-white hover:bg-gray-50 border border-gray-300 rounded-md transition-colors shadow-sm"
+          className="flex items-center gap-1 px-3 py-1 text-xs font-medium text-gray-900 bg-white hover:bg-gray-50 border border-gray-300 rounded-md transition-colors shadow-md hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
           title="Download as JSON file"
         >
-          <Download className="w-3 h-3" />
+          <Download className="w-3 h-3 text-gray-700" />
           Download
         </button>
       </div>

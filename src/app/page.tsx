@@ -1,10 +1,10 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { useJSONProcessor } from '@/hooks/useJSONProcessor';
-import JSONInput from '@/components/JSONInput';
-import JSONOutput from '@/components/JSONOutput';
-import { Sparkles, Code, FileJson, Github } from 'lucide-react';
+import { useState } from "react";
+import { useJSONProcessor } from "@/hooks/useJSONProcessor";
+import JSONInput from "@/components/JSONInput";
+import JSONOutput from "@/components/JSONOutput";
+import { Sparkles, Code, FileJson, Github } from "lucide-react";
 
 export default function Home() {
   const {
@@ -12,12 +12,16 @@ export default function Home() {
     jsonObjects,
     isProcessing,
     error,
+    moliMode,
+    setMoliMode,
     processJSON,
-    setInputText
+    setInputText,
   } = useJSONProcessor();
 
-  const [searchTerm, setSearchTerm] = useState('');
-  const [filterType, setFilterType] = useState<'all' | 'valid' | 'invalid'>('all');
+  const [searchTerm, setSearchTerm] = useState("");
+  const [filterType, setFilterType] = useState<"all" | "valid" | "invalid">(
+    "all"
+  );
 
   const handleProcess = () => {
     processJSON(inputText);
@@ -44,6 +48,25 @@ export default function Home() {
             </div>
 
             <div className="flex items-center gap-4">
+              {/* MOLI Mode Toggle */}
+              <div className="flex items-center gap-2">
+                <span className="text-sm font-medium text-gray-700">
+                  MOLI Mode
+                </span>
+                <button
+                  onClick={() => setMoliMode(!moliMode)}
+                  className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
+                    moliMode ? "bg-blue-600" : "bg-gray-200"
+                  }`}
+                >
+                  <span
+                    className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+                      moliMode ? "translate-x-6" : "translate-x-1"
+                    }`}
+                  />
+                </button>
+              </div>
+
               <a
                 href="https://github.com"
                 target="_blank"
@@ -59,7 +82,7 @@ export default function Home() {
       </header>
 
       {/* Main Content */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <main className="max-w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Error Message */}
         {error && (
           <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg">
@@ -72,25 +95,27 @@ export default function Home() {
         )}
 
         {/* Side-by-side Layout */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 h-[calc(100vh-250px)]">
+        <div className="grid grid-cols-1 xl:grid-cols-2 gap-6 h-[calc(100vh-200px)]">
           {/* Input Section */}
-          <div className="flex flex-col">
+          <div className="flex flex-col min-h-0">
             <JSONInput
               value={inputText}
               onChange={setInputText}
               onProcess={handleProcess}
               isProcessing={isProcessing}
+              moliMode={moliMode}
             />
           </div>
 
           {/* Output Section */}
-          <div className="flex flex-col">
+          <div className="flex flex-col min-h-0">
             <JSONOutput
               jsonObjects={jsonObjects}
               searchTerm={searchTerm}
               onSearchChange={setSearchTerm}
               filterType={filterType}
               onFilterChange={setFilterType}
+              moliMode={moliMode}
             />
           </div>
         </div>
@@ -100,7 +125,9 @@ export default function Home() {
           <div className="mt-8">
             <div className="flex items-center gap-2 mb-4">
               <Sparkles className="w-5 h-5 text-blue-600" />
-              <h2 className="text-lg font-semibold text-gray-900">Quick Examples</h2>
+              <h2 className="text-lg font-semibold text-gray-900">
+                Quick Examples
+              </h2>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -141,10 +168,17 @@ interface ExampleCardProps {
   onExampleSelect: (example: string) => void;
 }
 
-function ExampleCard({ title, description, example, onExampleSelect }: ExampleCardProps) {
+function ExampleCard({
+  title,
+  description,
+  example,
+  onExampleSelect,
+}: ExampleCardProps) {
   return (
-    <div className="bg-white border border-gray-200 rounded-lg p-4 hover:border-blue-300 hover:shadow-md transition-all cursor-pointer"
-         onClick={() => onExampleSelect(example)}>
+    <div
+      className="bg-white border border-gray-200 rounded-lg p-4 hover:border-blue-300 hover:shadow-md transition-all cursor-pointer"
+      onClick={() => onExampleSelect(example)}
+    >
       <h3 className="font-medium text-gray-900 mb-1">{title}</h3>
       <p className="text-sm text-gray-500 mb-3">{description}</p>
       <pre className="text-xs bg-gray-50 p-2 rounded border border-gray-200 overflow-x-auto">

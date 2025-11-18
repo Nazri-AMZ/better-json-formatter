@@ -24,3 +24,97 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+/* Improved contrast for better accessibility - override existing Tailwind gray utilities */
+.text-gray-500 {
+  color: #374151 !important; /* was #6b7280 - better contrast */
+}
+
+.text-gray-600 {
+  color: #4b5563 !important; /* was #6b7280 - darker for better readability */
+}
+
+.text-gray-700 {
+  color: #374151 !important; /* was #374151 - maintained */
+}
+
+.text-gray-900 {
+  color: #111827 !important; /* was #111827 - maintained for primary text */
+}
+
+/* MOLI-specific color classes */
+.moli-request {
+  color: #2563eb; /* blue */
+  background-color: #eff6ff;
+}
+
+.moli-response {
+  color: #059669; /* green */
+  background-color: #f0fdf4;
+}
+
+.moli-warning {
+  color: #d97706; /* amber */
+  background-color: #fffbeb;
+}
+
+.moli-error {
+  color: #dc2626; /* red */
+  background-color: #fef2f2;
+}
+
+.moli-active-indicator {
+  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+  color: white;
+  font-weight: 600;
+}
+
+/* Improved contrast for hover states */
+.hover\:text-gray-700:hover {
+  color: #1f2937 !important; /* darker than default for better contrast */
+}
+
+.hover\:bg-gray-100:hover {
+  background-color: #f3f4f6 !important; /* ensure sufficient contrast */
+}
+
+/* Focus states with better contrast */
+.focus\:outline-none:focus {
+  outline: 2px solid #2563eb !important;
+  outline-offset: 2px !important;
+}
+
+.focus\:ring-blue-500:focus {
+  --tw-ring-color: #2563eb !important;
+}
+
+/* Ensure MOLI mode elements have proper contrast */
+.bg-blue-50 {
+  background-color: #eff6ff !important; /* lighter blue background */
+}
+
+.text-blue-700 {
+  color: #1d4ed8 !important; /* darker blue for better contrast */
+}
+
+.text-blue-800 {
+  color: #1e40af !important; /* even darker for headings */
+}
+
+/* Improved contrast for warnings and alerts */
+.text-yellow-700 {
+  color: #a16207 !important; /* darker yellow for better contrast */
+}
+
+.text-orange-600 {
+  color: #ea580c !important; /* darker orange */
+}
+
+/* Better contrast for borders */
+.border-gray-200 {
+  border-color: #e5e7eb !important;
+}
+
+.border-gray-300 {
+  border-color: #d1d5db !important;
+}

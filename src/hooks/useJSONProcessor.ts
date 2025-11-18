@@ -11,6 +11,7 @@ export function useJSONProcessor() {
     error: null,
     inputText: ''
   });
+  const [moliMode, setMoliMode] = useState(false);
 
   const processor = new JSONProcessor();
 
@@ -35,7 +36,16 @@ export function useJSONProcessor() {
       // Simulate processing delay for better UX
       await new Promise(resolve => setTimeout(resolve, 500));
 
-      const jsonObjects = processor.extractJSONObjects(inputText);
+      const jsonObjects = processor.extractJSONObjects(inputText, moliMode);
+
+      // Test the parsed JSON by logging it for debugging
+      if (jsonObjects.length > 0) {
+        console.log('JSON parsing results:', {
+          count: jsonObjects.length,
+          firstObjectKeys: jsonObjects[0]?.parsedData ? Object.keys(jsonObjects[0].parsedData) : 'null',
+          firstObjectValid: jsonObjects[0]?.isValid || false
+        });
+      }
 
       if (jsonObjects.length === 0) {
         setState(prev => ({
@@ -111,6 +121,8 @@ export function useJSONProcessor() {
 
   return {
     ...state,
+    moliMode,
+    setMoliMode,
     processJSON,
     setInputText,
     clearResults,
