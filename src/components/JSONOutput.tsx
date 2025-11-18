@@ -171,6 +171,24 @@ export default function JSONOutput({
             <option value="invalid">Invalid ({invalidCount})</option>
           </select>
         </div>
+
+        {/* Expand/Close All Cards Controls */}
+        <div className="flex items-center gap-2 border-l border-gray-200 pl-3">
+          <button
+            onClick={expandAllCards}
+            className="text-xs px-2 py-1 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded transition-colors"
+            title="Expand all JSON cards"
+          >
+            Expand All
+          </button>
+          <button
+            onClick={closeAllCards}
+            className="text-xs px-2 py-1 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded transition-colors"
+            title="Close all JSON cards"
+          >
+            Close All
+          </button>
+        </div>
       </div>
 
       {/* JSON Objects List */}
