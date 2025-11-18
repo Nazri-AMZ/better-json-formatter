@@ -262,10 +262,12 @@ function ObjectNode({ data, keyName, isLast, indent, globalExpandState }: JSONNo
       )}
 
       {!isExpanded && (
-        <span className="text-gray-400">
-          {' ... '}
-          <span className="text-gray-500">{'}'}</span>
-        </span>
+        <HoverCopyButton value={data} className="inline-block">
+          <span className="text-gray-400">
+            {' ... '}
+            <span className="text-gray-500">{'}'}</span>
+          </span>
+        </HoverCopyButton>
       )}
 
       {!isLast && <span className="text-gray-500">,</span>}
