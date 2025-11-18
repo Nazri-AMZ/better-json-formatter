@@ -1,10 +1,10 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { useJSONProcessor } from '@/hooks/useJSONProcessor';
-import JSONInput from '@/components/JSONInput';
-import JSONOutput from '@/components/JSONOutput';
-import { Sparkles, Code, FileJson, Github } from 'lucide-react';
+import { useState } from "react";
+import { useJSONProcessor } from "@/hooks/useJSONProcessor";
+import JSONInput from "@/components/JSONInput";
+import JSONOutput from "@/components/JSONOutput";
+import { Sparkles, Code, FileJson, Github } from "lucide-react";
 
 export default function Home() {
   const {
@@ -15,11 +15,13 @@ export default function Home() {
     moliMode,
     setMoliMode,
     processJSON,
-    setInputText
+    setInputText,
   } = useJSONProcessor();
 
-  const [searchTerm, setSearchTerm] = useState('');
-  const [filterType, setFilterType] = useState<'all' | 'valid' | 'invalid'>('all');
+  const [searchTerm, setSearchTerm] = useState("");
+  const [filterType, setFilterType] = useState<"all" | "valid" | "invalid">(
+    "all"
+  );
 
   const handleProcess = () => {
     processJSON(inputText);
@@ -48,16 +50,18 @@ export default function Home() {
             <div className="flex items-center gap-4">
               {/* MOLI Mode Toggle */}
               <div className="flex items-center gap-2">
-                <span className="text-sm font-medium text-gray-700">MOLI Mode</span>
+                <span className="text-sm font-medium text-gray-700">
+                  MOLI Mode
+                </span>
                 <button
                   onClick={() => setMoliMode(!moliMode)}
                   className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-                    moliMode ? 'bg-blue-600' : 'bg-gray-200'
+                    moliMode ? "bg-blue-600" : "bg-gray-200"
                   }`}
                 >
                   <span
                     className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
-                      moliMode ? 'translate-x-6' : 'translate-x-1'
+                      moliMode ? "translate-x-6" : "translate-x-1"
                     }`}
                   />
                 </button>
@@ -78,7 +82,7 @@ export default function Home() {
       </header>
 
       {/* Main Content */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <main className="max-w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Error Message */}
         {error && (
           <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg">
@@ -121,7 +125,9 @@ export default function Home() {
           <div className="mt-8">
             <div className="flex items-center gap-2 mb-4">
               <Sparkles className="w-5 h-5 text-blue-600" />
-              <h2 className="text-lg font-semibold text-gray-900">Quick Examples</h2>
+              <h2 className="text-lg font-semibold text-gray-900">
+                Quick Examples
+              </h2>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -162,10 +168,17 @@ interface ExampleCardProps {
   onExampleSelect: (example: string) => void;
 }
 
-function ExampleCard({ title, description, example, onExampleSelect }: ExampleCardProps) {
+function ExampleCard({
+  title,
+  description,
+  example,
+  onExampleSelect,
+}: ExampleCardProps) {
   return (
-    <div className="bg-white border border-gray-200 rounded-lg p-4 hover:border-blue-300 hover:shadow-md transition-all cursor-pointer"
-         onClick={() => onExampleSelect(example)}>
+    <div
+      className="bg-white border border-gray-200 rounded-lg p-4 hover:border-blue-300 hover:shadow-md transition-all cursor-pointer"
+      onClick={() => onExampleSelect(example)}
+    >
       <h3 className="font-medium text-gray-900 mb-1">{title}</h3>
       <p className="text-sm text-gray-500 mb-3">{description}</p>
       <pre className="text-xs bg-gray-50 p-2 rounded border border-gray-200 overflow-x-auto">

@@ -70,46 +70,94 @@ export class JSONProcessor {
    * Validate and attempt to recover JSON
    */
   validateAndRecoverJSON(jsonString: string): ValidationResult {
-    let warnings: string[] = [];
-    let recoveredText = jsonString;
-
+    // Stage 1: direct parse attempt
     try {
-      // First attempt: direct parsing
-      const data = JSON.parse(jsonString);
       return {
-        data,
+        data: JSON.parse(jsonString),
         isValid: true,
         warnings: [],
+        recoveredText: jsonString,
       };
-    } catch (error) {
-      // Recovery attempts
-      const recoveryResult = this.recoverJSON(jsonString);
-      recoveredText = recoveryResult.text;
-      warnings = recoveryResult.warnings;
+    } catch {}
 
-      try {
-        const data = JSON.parse(recoveredText);
-        return {
-          data,
-          isValid: true,
-          warnings,
-          recoveredText,
-        };
-      } catch (finalError) {
-        // If recovery fails, return partial data
-        return {
-          data: null,
-          isValid: false,
-          warnings: [
-            ...warnings,
-            `Failed to parse JSON: ${
-              finalError instanceof Error ? finalError.message : "Unknown error"
-            }`,
-          ],
-          recoveredText,
-        };
-      }
+    // Stage 2: attempt structured repair
+    const { repaired, warnings } = this.repairJSON(jsonString);
+
+    try {
+      return {
+        data: JSON.parse(repaired),
+        isValid: true,
+        warnings,
+        recoveredText: repaired,
+      };
+    } catch (err) {
+      return {
+        data: null,
+        isValid: false,
+        warnings: [
+          ...warnings,
+          `Failed to parse JSON: ${(err as Error).message}`,
+        ],
+        recoveredText: repaired,
+      };
     }
+  }
+
+  private repairJSON(bad: string): { repaired: string; warnings: string[] } {
+    const warnings: string[] = [];
+    let text = bad.trim();
+
+    // Remove invisible junk
+    text = text.replace(/[^\S\r\n]+$/gm, "");
+
+    // ---- 1. Remove trailing commas ----
+    if (/,(\s*[}\]])/g.test(text)) {
+      text = text.replace(/,(\s*[}\]])/g, "$1");
+      warnings.push("Removed trailing commas");
+    }
+
+    // ---- 2. Fix unquoted keys ----
+    text = text.replace(/([{,]\s*)([A-Za-z0-9_]+)(\s*):/g, '$1"$2"$3:');
+    warnings.push("Fixed unquoted keys");
+
+    // ---- 3. Close incomplete strings ----
+    const quoteCount = (text.match(/"/g) || []).length;
+    if (quoteCount % 2 !== 0) {
+      text += '"';
+      warnings.push("Closed unmatched quotes");
+    }
+
+    // ---- 4. Balance braces/brackets ----
+    const opens = (text.match(/{/g) || []).length;
+    const closes = (text.match(/}/g) || []).length;
+    if (opens > closes) {
+      text += "}".repeat(opens - closes);
+      warnings.push("Added missing closing braces");
+    }
+    if (closes > opens) {
+      text = text.replace(/}$/, "");
+      warnings.push("Removed excessive closing braces");
+    }
+
+    const arrOpens = (text.match(/\[/g) || []).length;
+    const arrCloses = (text.match(/]/g) || []).length;
+    if (arrOpens > arrCloses) {
+      text += "]".repeat(arrOpens - arrCloses);
+      warnings.push("Added missing closing brackets");
+    }
+
+    // ---- 5. Fix missing commas between fields ----
+    text = text.replace(/"(\s*)"/g, '", "$1');
+    warnings.push("Inserted missing commas");
+
+    // ---- 6. If JSON ends inside a string or object, trim extraneous garbage ----
+    const lastBrace = text.lastIndexOf("}");
+    if (lastBrace !== -1 && lastBrace !== text.length - 1) {
+      text = text.slice(0, lastBrace + 1);
+      warnings.push("Trimmed trailing non-JSON content");
+    }
+
+    return { repaired: text, warnings };
   }
 
   /**
@@ -311,7 +359,7 @@ export class JSONProcessor {
    * Extract JSON objects from MOLI logs safely
    */
   private extractMOLILogs(text: string): ExtractedJSON[] {
-    const jsonObjects: ExtractedJSON[] = [];
+    const out: ExtractedJSON[] = [];
 
     let depth = 0;
     let inString = false;
@@ -321,13 +369,11 @@ export class JSONProcessor {
     for (let i = 0; i < text.length; i++) {
       const ch = text[i];
 
-      // Track escape characters
-      if (ch === "\\" && !escape) {
+      if (!escape && ch === "\\") {
         escape = true;
         continue;
       }
 
-      // Toggle string state
       if (!escape && ch === '"') {
         inString = !inString;
       }
@@ -339,9 +385,9 @@ export class JSONProcessor {
         } else if (ch === "}") {
           depth--;
           if (depth === 0 && start !== -1) {
-            const raw = text.substring(start, i + 1);
-            const processed = this.processMOLIJsonText(raw, start);
-            if (processed) jsonObjects.push(processed);
+            const raw = text.slice(start, i + 1);
+            const parsed = this.processMOLIJsonText(raw, start);
+            if (parsed) out.push(parsed);
             start = -1;
           }
         }
@@ -350,14 +396,14 @@ export class JSONProcessor {
       escape = false;
     }
 
-    // Handle incomplete MOLI JSON at end of text
+    // Handle trailing truncated MOLI JSON
     if (start !== -1) {
-      const raw = text.substring(start);
-      const processed = this.processMOLIJsonText(raw, start);
-      if (processed) jsonObjects.push(processed);
+      const raw = text.slice(start);
+      const parsed = this.processMOLIJsonText(raw, start);
+      if (parsed) out.push(parsed);
     }
 
-    return jsonObjects;
+    return out;
   }
 
   /**

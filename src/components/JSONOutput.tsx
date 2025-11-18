@@ -1,16 +1,26 @@
-'use client';
+"use client";
 
-import { ExtractedJSON, MOLILogType } from '@/types/json';
-import { CheckCircle, AlertTriangle, XCircle, Search, Filter, Activity, Clock, Server, User } from 'lucide-react';
-import BeautifiedJSON from '@/components/BeautifiedJSON';
-import TabularJSON from '@/components/TabularJSON';
+import { ExtractedJSON, MOLILogType } from "@/types/json";
+import {
+  CheckCircle,
+  AlertTriangle,
+  XCircle,
+  Search,
+  Filter,
+  Activity,
+  Clock,
+  Server,
+  User,
+} from "lucide-react";
+import BeautifiedJSON from "@/components/BeautifiedJSON";
+import TabularJSON from "@/components/TabularJSON";
 
 interface JSONOutputProps {
   jsonObjects: ExtractedJSON[];
   searchTerm: string;
   onSearchChange: (term: string) => void;
-  filterType: 'all' | 'valid' | 'invalid';
-  onFilterChange: (type: 'all' | 'valid' | 'invalid') => void;
+  filterType: "all" | "valid" | "invalid";
+  onFilterChange: (type: "all" | "valid" | "invalid") => void;
   moliMode: boolean;
 }
 
@@ -20,16 +30,16 @@ export default function JSONOutput({
   onSearchChange,
   filterType,
   onFilterChange,
-  moliMode
+  moliMode,
 }: JSONOutputProps) {
   // Filter JSON objects based on selected filter
-  const filteredObjects = jsonObjects.filter(obj => {
-    if (filterType === 'valid') return obj.isValid;
-    if (filterType === 'invalid') return !obj.isValid;
+  const filteredObjects = jsonObjects.filter((obj) => {
+    if (filterType === "valid") return obj.isValid;
+    if (filterType === "invalid") return !obj.isValid;
     return true;
   });
 
-  const validCount = jsonObjects.filter(obj => obj.isValid).length;
+  const validCount = jsonObjects.filter((obj) => obj.isValid).length;
   const invalidCount = jsonObjects.length - validCount;
 
   return (
@@ -38,10 +48,13 @@ export default function JSONOutput({
       <div className="flex items-center justify-between p-4 border-b border-gray-200 flex-shrink-0">
         <div className="flex items-center gap-3">
           <h3 className="font-semibold text-gray-900">
-            Output {moliMode && <span className="text-blue-600">(MOLI Mode)</span>}
+            Output{" "}
+            {moliMode && <span className="text-blue-600">(MOLI Mode)</span>}
           </h3>
           <div className="flex items-center gap-2 text-sm">
-            <span className="text-gray-600">{jsonObjects.length} JSON objects found</span>
+            <span className="text-gray-600">
+              {jsonObjects.length} JSON objects found
+            </span>
             {validCount > 0 && (
               <div className="flex items-center gap-1 text-green-600">
                 <CheckCircle className="w-4 h-4" />
@@ -80,7 +93,9 @@ export default function JSONOutput({
           <Filter className="w-4 h-4 text-gray-600" />
           <select
             value={filterType}
-            onChange={(e) => onFilterChange(e.target.value as 'all' | 'valid' | 'invalid')}
+            onChange={(e) =>
+              onFilterChange(e.target.value as "all" | "valid" | "invalid")
+            }
             className="text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900"
           >
             <option value="all">All ({jsonObjects.length})</option>
@@ -97,7 +112,8 @@ export default function JSONOutput({
             <XCircle className="w-12 h-12 mb-3" />
             <h3 className="text-lg font-medium mb-1">No JSON objects found</h3>
             <p className="text-sm text-center max-w-md">
-              Paste some JSON or log text in the input area and click "Process JSON" to see results here.
+              Paste some JSON or log text in the input area and click "Process
+              JSON" to see results here.
             </p>
           </div>
         ) : filteredObjects.length === 0 ? (
@@ -136,8 +152,9 @@ function JSONObjectCard({ jsonObject, index, moliMode }: JSONObjectCardProps) {
   const [isExpanded, setIsExpanded] = useState(true);
 
   const getStatusColor = () => {
-    if (jsonObject.isValid) return 'text-green-600 bg-green-50 border-green-200';
-    return 'text-red-600 bg-red-50 border-red-200';
+    if (jsonObject.isValid)
+      return "text-green-600 bg-green-50 border-green-200";
+    return "text-red-600 bg-red-50 border-red-200";
   };
 
   const getStatusIcon = () => {
@@ -146,8 +163,8 @@ function JSONObjectCard({ jsonObject, index, moliMode }: JSONObjectCardProps) {
   };
 
   const getStatusText = () => {
-    if (jsonObject.isValid) return 'Valid';
-    return 'Invalid';
+    if (jsonObject.isValid) return "Valid";
+    return "Invalid";
   };
 
   const getMOLILogTypeIcon = () => {
@@ -164,28 +181,29 @@ function JSONObjectCard({ jsonObject, index, moliMode }: JSONObjectCardProps) {
   };
 
   const getMOLILogTypeColor = () => {
-    if (!jsonObject.moliMetadata) return 'text-gray-600 bg-gray-50 border-gray-200';
+    if (!jsonObject.moliMetadata)
+      return "text-gray-600 bg-gray-50 border-gray-200";
 
     switch (jsonObject.moliMetadata.logType) {
       case MOLILogType.REQUEST:
-        return 'text-blue-600 bg-blue-50 border-blue-200';
+        return "text-blue-600 bg-blue-50 border-blue-200";
       case MOLILogType.RESPONSE:
-        return 'text-green-600 bg-green-50 border-green-200';
+        return "text-green-600 bg-green-50 border-green-200";
       default:
-        return 'text-gray-600 bg-gray-50 border-gray-200';
+        return "text-gray-600 bg-gray-50 border-gray-200";
     }
   };
 
   const getMOLILogTypeText = () => {
-    if (!jsonObject.moliMetadata) return 'Unknown';
+    if (!jsonObject.moliMetadata) return "Unknown";
 
     switch (jsonObject.moliMetadata.logType) {
       case MOLILogType.REQUEST:
-        return 'Request';
+        return "Request";
       case MOLILogType.RESPONSE:
-        return 'Response';
+        return "Response";
       default:
-        return 'Unknown';
+        return "Unknown";
     }
   };
 
@@ -197,31 +215,40 @@ function JSONObjectCard({ jsonObject, index, moliMode }: JSONObjectCardProps) {
         onClick={() => setIsExpanded(!isExpanded)}
       >
         <div className="flex items-center gap-3">
-          <button
-            className="flex items-center justify-center w-6 h-6 text-gray-400 hover:text-gray-600"
-          >
+          <button className="flex items-center justify-center w-6 h-6 text-gray-400 hover:text-gray-600">
             <svg
-              className={`w-4 h-4 transform transition-transform ${isExpanded ? 'rotate-90' : ''}`}
+              className={`w-4 h-4 transform transition-transform ${
+                isExpanded ? "rotate-90" : ""
+              }`}
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
             >
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M9 5l7 7-7 7"
+              />
             </svg>
           </button>
 
           <span className="font-medium text-gray-900">
-            {moliMode ? 'MOLI Log' : 'JSON'} #{index}
+            {moliMode ? "MOLI Log" : "JSON"} #{index}
           </span>
 
           {moliMode && jsonObject.moliMetadata && (
-            <div className={`flex items-center gap-1 px-2 py-1 text-xs font-medium rounded-full border ${getMOLILogTypeColor()}`}>
+            <div
+              className={`flex items-center gap-1 px-2 py-1 text-xs font-medium rounded-full border ${getMOLILogTypeColor()}`}
+            >
               {getMOLILogTypeIcon()}
               <span>{getMOLILogTypeText()}</span>
             </div>
           )}
 
-          <div className={`flex items-center gap-1 px-2 py-1 text-xs font-medium rounded-full border ${getStatusColor()}`}>
+          <div
+            className={`flex items-center gap-1 px-2 py-1 text-xs font-medium rounded-full border ${getStatusColor()}`}
+          >
             {getStatusIcon()}
             <span>{getStatusText()}</span>
           </div>
@@ -242,7 +269,9 @@ function JSONObjectCard({ jsonObject, index, moliMode }: JSONObjectCardProps) {
         </div>
 
         <div className="flex items-center gap-2 text-sm text-gray-500">
-          <span>Position: {jsonObject.startIndex}-{jsonObject.endIndex}</span>
+          <span>
+            Position: {jsonObject.startIndex}-{jsonObject.endIndex}
+          </span>
           <span>•</span>
           <span>{jsonObject.originalText.length} chars</span>
         </div>
@@ -251,8 +280,10 @@ function JSONObjectCard({ jsonObject, index, moliMode }: JSONObjectCardProps) {
       {/* MOLI Metadata */}
       {moliMode && jsonObject.moliMetadata && isExpanded && (
         <div className="px-3 py-2 bg-blue-50 border-b border-blue-200">
-          <div className="text-xs font-medium text-blue-800 mb-2">MOLI Metadata:</div>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-3 text-xs">
+          <div className="text-xs font-medium text-blue-800 mb-2">
+            MOLI Metadata:
+          </div>
+          <div className="grid grid-cols-2 gap-3 text-xs">
             {jsonObject.moliMetadata.service && (
               <div className="flex items-center gap-1 text-blue-700">
                 <Server className="w-3 h-3" />
@@ -271,14 +302,20 @@ function JSONObjectCard({ jsonObject, index, moliMode }: JSONObjectCardProps) {
               <div className="flex items-center gap-1 text-blue-700">
                 <Clock className="w-3 h-3" />
                 <span className="font-medium">Time:</span>
-                <span>{new Date(jsonObject.moliMetadata.timestamp).toLocaleTimeString()}</span>
+                <span>
+                  {new Date(
+                    jsonObject.moliMetadata.timestamp
+                  ).toLocaleTimeString()}
+                </span>
               </div>
             )}
             {jsonObject.moliMetadata.traceId && (
               <div className="flex items-center gap-1 text-blue-700">
                 <Activity className="w-3 h-3" />
                 <span className="font-medium">Trace ID:</span>
-                <span className="font-mono">{jsonObject.moliMetadata.traceId.substring(0, 8)}...</span>
+                <span className="font-mono">
+                  {jsonObject.moliMetadata.traceId}
+                </span>
               </div>
             )}
           </div>
@@ -288,7 +325,9 @@ function JSONObjectCard({ jsonObject, index, moliMode }: JSONObjectCardProps) {
       {/* Warnings */}
       {jsonObject.warnings.length > 0 && isExpanded && (
         <div className="px-3 py-2 bg-yellow-50 border-b border-yellow-200">
-          <div className="text-xs font-medium text-yellow-800 mb-1">Recovery Warnings:</div>
+          <div className="text-xs font-medium text-yellow-800 mb-1">
+            Recovery Warnings:
+          </div>
           <ul className="text-xs text-yellow-700 space-y-1">
             {jsonObject.warnings.map((warning, idx) => (
               <li key={idx} className="flex items-start gap-1">
@@ -311,23 +350,35 @@ function JSONObjectCard({ jsonObject, index, moliMode }: JSONObjectCardProps) {
 }
 
 // Import useState
-import { useState } from 'react';
+import { useState } from "react";
 
 // Content Display Component
-function JSONContentDisplay({ jsonObject, moliMode }: { jsonObject: ExtractedJSON; moliMode: boolean }) {
-  const [viewMode, setViewMode] = useState<'beautified' | 'tabular'>('beautified');
+function JSONContentDisplay({
+  jsonObject,
+  moliMode,
+}: {
+  jsonObject: ExtractedJSON;
+  moliMode: boolean;
+}) {
+  const [viewMode, setViewMode] = useState<"beautified" | "tabular">(
+    "beautified"
+  );
 
   if (!jsonObject.parsedData) {
     return (
       <div className="bg-red-50 border border-red-200 rounded-lg p-4">
         <div className="text-red-800 font-medium">
-          {jsonObject.isValid ? 'Failed to process recovered JSON' : 'Failed to parse JSON'}
+          {jsonObject.isValid
+            ? "Failed to process recovered JSON"
+            : "Failed to parse JSON"}
         </div>
         <div className="text-red-600 text-sm mt-1">
           Original text: {jsonObject.originalText.substring(0, 100)}...
           {jsonObject.warnings.length > 0 && (
             <div className="mt-2">
-              <div className="text-red-700 text-xs font-medium mb-1">Recovery attempts made:</div>
+              <div className="text-red-700 text-xs font-medium mb-1">
+                Recovery attempts made:
+              </div>
               <ul className="text-red-600 text-xs space-y-1">
                 {jsonObject.warnings.map((warning, idx) => (
                   <li key={idx} className="flex items-start gap-1">
@@ -348,21 +399,21 @@ function JSONContentDisplay({ jsonObject, moliMode }: { jsonObject: ExtractedJSO
       {/* View Mode Tabs */}
       <div className="flex border-b border-gray-200 mb-4">
         <button
-          onClick={() => setViewMode('beautified')}
+          onClick={() => setViewMode("beautified")}
           className={`px-4 py-2 text-sm font-medium border-b-2 transition-colors ${
-            viewMode === 'beautified'
-              ? 'text-blue-600 border-blue-600'
-              : 'text-gray-500 border-transparent hover:text-gray-700'
+            viewMode === "beautified"
+              ? "text-blue-600 border-blue-600"
+              : "text-gray-500 border-transparent hover:text-gray-700"
           }`}
         >
           Beautified
         </button>
         <button
-          onClick={() => setViewMode('tabular')}
+          onClick={() => setViewMode("tabular")}
           className={`px-4 py-2 text-sm font-medium border-b-2 transition-colors ${
-            viewMode === 'tabular'
-              ? 'text-blue-600 border-blue-600'
-              : 'text-gray-500 border-transparent hover:text-gray-700'
+            viewMode === "tabular"
+              ? "text-blue-600 border-blue-600"
+              : "text-gray-500 border-transparent hover:text-gray-700"
           }`}
         >
           Tabular View
@@ -370,7 +421,7 @@ function JSONContentDisplay({ jsonObject, moliMode }: { jsonObject: ExtractedJSO
       </div>
 
       {/* Content */}
-      {viewMode === 'beautified' ? (
+      {viewMode === "beautified" ? (
         <BeautifiedJSONDisplay data={jsonObject.parsedData} />
       ) : (
         <TabularJSONDisplay data={jsonObject.parsedData} />
