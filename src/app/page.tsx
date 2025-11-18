@@ -99,6 +99,7 @@ export default function Home() {
               onChange={setInputText}
               onProcess={handleProcess}
               isProcessing={isProcessing}
+              moliMode={moliMode}
             />
           </div>
 
@@ -110,6 +111,7 @@ export default function Home() {
               onSearchChange={setSearchTerm}
               filterType={filterType}
               onFilterChange={setFilterType}
+              moliMode={moliMode}
             />
           </div>
         </div>
