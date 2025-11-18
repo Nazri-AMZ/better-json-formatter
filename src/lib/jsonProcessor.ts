@@ -284,97 +284,70 @@ export class JSONProcessor {
   private extractMOLILogs(text: string): ExtractedJSON[] {
     const jsonObjects: ExtractedJSON[] = [];
 
-    // First try to find JSON objects using improved regex patterns
-    const jsonPattern = /(\{[^{}]*(?:\{[^{}]*\}[^{}]*)*\})/g;
-    let match;
-    const foundJsonObjects: string[] = [];
-
-    while ((match = jsonPattern.exec(text)) !== null) {
-      const jsonText = match[1];
-      foundJsonObjects.push(jsonText);
-    }
-
-    // If we found JSON objects with regex, process them directly
-    if (foundJsonObjects.length > 0) {
-      for (const jsonText of foundJsonObjects) {
-        const processedObject = this.processMOLIJsonText(jsonText, text.indexOf(jsonText));
-        if (processedObject) {
-          jsonObjects.push(processedObject);
-        }
-      }
-      return jsonObjects;
-    }
-
-    // Fallback to line-by-line processing for edge cases
-    const lines = text.split('\n');
-    let currentJsonText = '';
+    // Use a proper brace-counting approach to find complete JSON objects
+    let startIndex = -1;
     let braceCount = 0;
     let bracketCount = 0;
     let inJsonString = false;
-    let startIndex = -1;
+    let i = 0;
 
-    for (let i = 0; i < lines.length; i++) {
-      const line = lines[i];
+    while (i < text.length) {
+      const char = text[i];
 
-      // Skip empty lines and lines that are clearly text separators
-      if (!line.trim() || line.trim().match(/^(request|response)\s+\d+:/i)) {
-        // If we have accumulated JSON text, process it
-        if (currentJsonText.trim()) {
-          const processedObject = this.processMOLIJsonText(currentJsonText, startIndex);
-          if (processedObject) {
-            jsonObjects.push(processedObject);
-          }
-          currentJsonText = '';
-          braceCount = 0;
-          bracketCount = 0;
-          inJsonString = false;
-          startIndex = -1;
+      // Skip leading whitespace and non-JSON content
+      if (startIndex === -1) {
+        if (char === '{') {
+          startIndex = i;
+          braceCount = 1;
+        } else if (char !== ' ' && char !== '\n' && char !== '\r' && char !== '\t') {
+          // Skip non-JSON content
+          i++;
+          continue;
         }
-        continue;
-      }
-
-      // Check if line starts a JSON object
-      if (line.includes('{') && braceCount === 0 && bracketCount === 0) {
-        if (startIndex === -1) {
-          startIndex = text.indexOf(line);
-        }
-      }
-
-      // Track brace and bracket counts to find complete JSON objects
-      for (let j = 0; j < line.length; j++) {
-        const char = line[j];
-
-        if (char === '"' && (j === 0 || line[j-1] !== '\\')) {
+      } else {
+        // We're inside a potential JSON object
+        if (char === '"' && (i === 0 || text[i-1] !== '\\')) {
           inJsonString = !inJsonString;
         }
 
         if (!inJsonString) {
-          if (char === '{') braceCount++;
-          else if (char === '}') braceCount--;
-          else if (char === '[') bracketCount++;
-          else if (char === ']') bracketCount--;
+          if (char === '{') {
+            braceCount++;
+          } else if (char === '}') {
+            braceCount--;
+          } else if (char === '[') {
+            bracketCount++;
+          } else if (char === ']') {
+            bracketCount--;
+          }
+        }
+
+        // If we've closed all braces and brackets, we have a complete JSON object
+        if (braceCount === 0 && bracketCount === 0 && startIndex !== -1) {
+          const jsonText = text.substring(startIndex, i + 1);
+
+          // Validate this looks like JSON (starts with { and ends with })
+          if (jsonText.trim().startsWith('{') && jsonText.trim().endsWith('}')) {
+            const processedObject = this.processMOLIJsonText(jsonText, startIndex);
+            if (processedObject) {
+              jsonObjects.push(processedObject);
+            }
+          }
+
+          startIndex = -1;
+          braceCount = 0;
+          bracketCount = 0;
+          inJsonString = false;
         }
       }
 
-      currentJsonText += (currentJsonText ? ' ' : '') + line;
-
-      // If we've closed all braces and brackets, we have a complete JSON object
-      if (braceCount === 0 && bracketCount === 0 && currentJsonText.trim()) {
-        const processedObject = this.processMOLIJsonText(currentJsonText, startIndex);
-        if (processedObject) {
-          jsonObjects.push(processedObject);
-        }
-        currentJsonText = '';
-        braceCount = 0;
-        bracketCount = 0;
-        inJsonString = false;
-        startIndex = -1;
-      }
+      i++;
     }
 
-    // Process any remaining JSON text
-    if (currentJsonText.trim()) {
-      const processedObject = this.processMOLIJsonText(currentJsonText, startIndex);
+    // If we have incomplete JSON at the end, try to process it
+    if (startIndex !== -1 && braceCount > 0) {
+      const incompleteJsonText = text.substring(startIndex);
+      const processedObject = this.processMOLIJsonText(incompleteJsonText, startIndex);
       if (processedObject) {
         jsonObjects.push(processedObject);
       }
