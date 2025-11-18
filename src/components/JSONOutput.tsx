@@ -474,9 +474,6 @@ function JSONObjectCard({ jsonObject, index, originalIndex, moliMode, globalExpa
   );
 }
 
-// Import useState
-import { useState } from "react";
-
 // Content Display Component
 function JSONContentDisplay({
   jsonObject,
