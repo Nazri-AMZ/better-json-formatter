@@ -129,7 +129,7 @@ export class JSONProcessor {
       }
     }
 
-    // Remove trailing commas before closing braces/brackets
+    // Remove trailing commas before closing braces/brackets (more robust)
     if (/,(\s*[}\]])/g.test(recovered)) {
       recovered = recovered.replace(/,(\s*[}\]])/g, '$1');
       warnings.push('Removed trailing commas');
