@@ -73,18 +73,6 @@ export default function Home() {
                 GitHub
               </a>
             </div>
-
-            <div className="flex items-center gap-4">
-              <a
-                href="https://github.com"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center gap-2 px-3 py-2 text-sm text-gray-700 hover:text-gray-900 hover:bg-gray-100 rounded-md transition-colors"
-              >
-                <Github className="w-4 h-4" />
-                GitHub
-              </a>
-            </div>
           </div>
         </div>
       </header>
