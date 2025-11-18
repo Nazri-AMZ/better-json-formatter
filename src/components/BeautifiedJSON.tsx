@@ -1,7 +1,7 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { ChevronRight, ChevronDown, Copy, Download, Check } from 'lucide-react';
+import { useState } from "react";
+import { ChevronRight, ChevronDown, Copy, Download, Check } from "lucide-react";
 
 interface BeautifiedJSONProps {
   data: any;
@@ -17,7 +17,12 @@ interface JSONNodeProps {
   indent: number;
 }
 
-export default function BeautifiedJSON({ data, indent = 2, onCopy, onDownload }: BeautifiedJSONProps) {
+export default function BeautifiedJSON({
+  data,
+  indent = 2,
+  onCopy,
+  onDownload,
+}: BeautifiedJSONProps) {
   const [copied, setCopied] = useState(false);
 
   const handleCopy = async () => {
@@ -34,9 +39,9 @@ export default function BeautifiedJSON({ data, indent = 2, onCopy, onDownload }:
 
   const handleDownload = () => {
     const jsonString = JSON.stringify(data, null, indent);
-    const blob = new Blob([jsonString], { type: 'application/json' });
+    const blob = new Blob([jsonString], { type: "application/json" });
     const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
+    const a = document.createElement("a");
     a.href = url;
     a.download = `json-${Date.now()}.json`;
     document.body.appendChild(a);
@@ -87,12 +92,39 @@ export default function BeautifiedJSON({ data, indent = 2, onCopy, onDownload }:
 
 // JSON Node Component with syntax highlighting and expand/collapse
 function JSONNode({ data, keyName, isLast, indent }: JSONNodeProps) {
-  const [isExpanded, setIsExpanded] = useState(true);
-  const indentSize = 2;
+  const indentSize = 2; // Keep for calculations
+
+  // If the data is an object or array, delegate rendering to the specific node component
+  const isComplex = typeof data === "object" && data !== null;
+  const isArray = Array.isArray(data);
+
+  if (isComplex) {
+    if (isArray) {
+      return (
+        <ArrayNode
+          data={data}
+          keyName={keyName}
+          isLast={isLast}
+          indent={indent}
+        />
+      );
+    } else {
+      // Must check if data is NOT an array, because Array.isArray(data) returns true for array
+      return (
+        <ObjectNode
+          data={data}
+          keyName={keyName}
+          isLast={isLast}
+          indent={indent}
+        />
+      );
+    }
+  }
+
+  // --- Render Primitive Value ---
 
   const getValueType = (value: any): string => {
-    if (value === null) return 'null';
-    if (Array.isArray(value)) return 'array';
+    if (value === null) return "null";
     return typeof value;
   };
 
@@ -100,41 +132,22 @@ function JSONNode({ data, keyName, isLast, indent }: JSONNodeProps) {
     const type = getValueType(data);
 
     switch (type) {
-      case 'string':
+      case "string":
         return <span className="text-green-400">"{data}"</span>;
-      case 'number':
-        return <span className="text-blue-400">{data}</span>;
-      case 'boolean':
-        return <span className="text-yellow-400">{data}</span>;
-      case 'null':
+      case "number":
+        return <span className="text-blue-400">{String(data)}</span>; // Ensure number is rendered as string
+      case "boolean":
+        return <span className="text-yellow-400">{String(data)}</span>; // Ensure boolean is rendered as string
+      case "null":
         return <span className="text-purple-400">null</span>;
-      case 'object':
-        if (Array.isArray(data)) {
-          return (
-            <ArrayNode
-              data={data}
-              keyName={keyName}
-              isLast={isLast}
-              indent={indent}
-            />
-          );
-        } else {
-          return (
-            <ObjectNode
-              data={data}
-              keyName={keyName}
-              isLast={isLast}
-              indent={indent}
-            />
-          );
-        }
       default:
+        // Catches undefined, symbol, etc. which aren't typical JSON
         return <span className="text-gray-400">{String(data)}</span>;
     }
   };
 
   const renderKey = () => {
-    if (keyName === undefined) return null;
+    if (keyName === undefined || keyName === null) return null;
     return (
       <>
         <span className="text-blue-300">"{keyName}"</span>
@@ -144,12 +157,14 @@ function JSONNode({ data, keyName, isLast, indent }: JSONNodeProps) {
   };
 
   return (
-    <div className="select-none">
-      <span style={{ paddingLeft: `${indent * indentSize * 0.6}rem` }}>
-        {renderKey()}
-        {renderValue()}
-        {!isLast && <span className="text-gray-500">,</span>}
-      </span>
+    <div
+      // Removed select-none to allow text selection
+      className="inline-block w-full"
+      style={{ paddingLeft: `${indent * indentSize * 0.6}rem` }}
+    >
+      {renderKey()}
+      {renderValue()}
+      {!isLast && <span className="text-gray-500">,</span>}
     </div>
   );
 }
@@ -159,27 +174,43 @@ function ObjectNode({ data, keyName, isLast, indent }: JSONNodeProps) {
   const [isExpanded, setIsExpanded] = useState(true);
   const entries = Object.entries(data);
   const hasEntries = entries.length > 0;
+  const indentSize = 2; // For calculating closing brace indentation
 
-  if (!hasEntries) {
+  const renderKey = () => {
+    if (keyName === undefined || keyName === null) return null;
     return (
-      <span>
-        <span className="text-gray-500">{'{'}</span>
-        <span className="text-gray-500">{'}'}</span>
-      </span>
+      <>
+        <span className="text-blue-300">"{keyName}"</span>
+        <span className="text-gray-500">: </span>
+      </>
     );
-  }
+  };
+
+  const toggleExpand = () => setIsExpanded(!isExpanded);
 
   return (
-    <span>
+    <div
+      className="inline-block w-full"
+      style={{ paddingLeft: `${indent * indentSize * 0.6}rem` }}
+    >
+      {renderKey()}
       <span
         className="text-gray-500 cursor-pointer hover:text-gray-400"
-        onClick={() => setIsExpanded(!isExpanded)}
+        onClick={toggleExpand}
       >
-        {isExpanded ? <ChevronDown className="inline w-3 h-3" /> : <ChevronRight className="inline w-3 h-3" />}
-        {'{'}
+        {isExpanded ? (
+          <ChevronDown className="inline w-3 h-3 mr-1" />
+        ) : (
+          <ChevronRight className="inline w-3 h-3 mr-1" />
+        )}
+        {"{"}
+        {/* Shows count when collapsed */}
+        {!isExpanded && hasEntries && (
+          <span className="text-gray-400 ml-1">... {entries.length} items</span>
+        )}
       </span>
 
-      {isExpanded && (
+      {isExpanded && hasEntries && (
         <>
           <div>
             {entries.map(([key, value], index) => (
@@ -192,21 +223,25 @@ function ObjectNode({ data, keyName, isLast, indent }: JSONNodeProps) {
               />
             ))}
           </div>
-          <span style={{ paddingLeft: `${(indent + 0.5) * 1.2}rem` }}>
-            <span className="text-gray-500">{'}'}</span>
+          <span
+            className="text-gray-500 block"
+            style={{ paddingLeft: `${indent * indentSize * 0.6}rem` }}
+          >
+            {"}"}
           </span>
         </>
       )}
 
-      {!isExpanded && (
-        <span className="text-gray-400">
-          {' ... '}
-          <span className="text-gray-500">{'}'}</span>
-        </span>
+      {/* For empty object case */}
+      {!hasEntries && <span className="text-gray-500">{"}"}</span>}
+
+      {/* For collapsed object case */}
+      {!isExpanded && hasEntries && (
+        <span className="text-gray-500">{"}"}</span>
       )}
 
       {!isLast && <span className="text-gray-500">,</span>}
-    </span>
+    </div>
   );
 }
 
@@ -214,29 +249,46 @@ function ObjectNode({ data, keyName, isLast, indent }: JSONNodeProps) {
 function ArrayNode({ data, keyName, isLast, indent }: JSONNodeProps) {
   const [isExpanded, setIsExpanded] = useState(true);
   const hasItems = data.length > 0;
+  const indentSize = 2;
 
-  if (!hasItems) {
+  const renderKey = () => {
+    if (keyName === undefined || keyName === null) return null;
     return (
-      <span>
-        <span className="text-gray-500">[</span>
-        <span className="text-gray-500">]</span>
-      </span>
+      <>
+        <span className="text-blue-300">"{keyName}"</span>
+        <span className="text-gray-500">: </span>
+      </>
     );
-  }
+  };
+
+  const toggleExpand = () => setIsExpanded(!isExpanded);
 
   return (
-    <span>
+    <div
+      className="inline-block w-full"
+      style={{ paddingLeft: `${indent * indentSize * 0.6}rem` }}
+    >
+      {renderKey()}
       <span
         className="text-gray-500 cursor-pointer hover:text-gray-400"
-        onClick={() => setIsExpanded(!isExpanded)}
+        onClick={toggleExpand}
       >
-        {isExpanded ? <ChevronDown className="inline w-3 h-3" /> : <ChevronRight className="inline w-3 h-3" />}
-        {'['}
+        {isExpanded ? (
+          <ChevronDown className="inline w-3 h-3 mr-1" />
+        ) : (
+          <ChevronRight className="inline w-3 h-3 mr-1" />
+        )}
+        {"["}
+        {/* Shows count when collapsed */}
+        {!isExpanded && hasItems && (
+          <span className="text-gray-400 ml-1">... {data.length} items</span>
+        )}
       </span>
 
-      {isExpanded && (
+      {isExpanded && hasItems && (
         <>
           <div>
+            {/* Array items do not have a keyName, so we pass null */}
             {data.map((item: any, index: number) => (
               <JSONNode
                 key={index}
@@ -246,20 +298,22 @@ function ArrayNode({ data, keyName, isLast, indent }: JSONNodeProps) {
               />
             ))}
           </div>
-          <span style={{ paddingLeft: `${(indent + 0.5) * 1.2}rem` }}>
-            <span className="text-gray-500">{']'}</span>
+          <span
+            className="text-gray-500 block"
+            style={{ paddingLeft: `${indent * indentSize * 0.6}rem` }}
+          >
+            {"]"}
           </span>
         </>
       )}
 
-      {!isExpanded && (
-        <span className="text-gray-400">
-          {' ... '}
-          <span className="text-gray-500">{']'}</span>
-        </span>
-      )}
+      {/* For empty array case */}
+      {!hasItems && <span className="text-gray-500">{"]"}</span>}
+
+      {/* For collapsed array case */}
+      {!isExpanded && hasItems && <span className="text-gray-500">{"]"}</span>}
 
       {!isLast && <span className="text-gray-500">,</span>}
-    </span>
+    </div>
   );
 }
