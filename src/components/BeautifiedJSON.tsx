@@ -211,18 +211,9 @@ function ObjectNode({ data, keyName, isLast, indent }: JSONNodeProps) {
 }
 
 // Array Node Component
-function ArrayNode({ data, keyName, isLast, indent, globalExpandState }: JSONNodeProps) {
+function ArrayNode({ data, keyName, isLast, indent }: JSONNodeProps) {
   const [isExpanded, setIsExpanded] = useState(true);
   const hasItems = data.length > 0;
-
-  // Handle global expand/collapse state
-  useEffect(() => {
-    if (globalExpandState === 'expanded') {
-      setIsExpanded(true);
-    } else if (globalExpandState === 'collapsed') {
-      setIsExpanded(false);
-    }
-  }, [globalExpandState]);
 
   if (!hasItems) {
     return (
