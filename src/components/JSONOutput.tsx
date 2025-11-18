@@ -410,7 +410,7 @@ function JSONObjectCard({ jsonObject, index, originalIndex, moliMode, onOpenPopu
       {/* Content */}
       {isExpanded && (
         <div className="p-4">
-          <JSONContentDisplay jsonObject={jsonObject} moliMode={moliMode} globalExpandState={globalExpandState} />
+          <JSONContentDisplay jsonObject={jsonObject} moliMode={moliMode} />
         </div>
       )}
     </div>
