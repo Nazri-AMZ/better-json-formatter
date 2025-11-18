@@ -95,6 +95,15 @@ export function useJSONProcessor() {
       ...prev,
       inputText: text
     }));
+
+    // Save to localStorage
+    if (typeof window !== 'undefined') {
+      try {
+        localStorage.setItem('json-formatter-input', text);
+      } catch (error) {
+        console.error('Failed to save input to localStorage:', error);
+      }
+    }
   }, []);
 
   const clearResults = useCallback(() => {
