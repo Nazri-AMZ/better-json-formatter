@@ -320,9 +320,24 @@ function JSONContentDisplay({ jsonObject, moliMode }: { jsonObject: ExtractedJSO
   if (!jsonObject.parsedData) {
     return (
       <div className="bg-red-50 border border-red-200 rounded-lg p-4">
-        <div className="text-red-800 font-medium">Failed to parse JSON</div>
+        <div className="text-red-800 font-medium">
+          {jsonObject.isValid ? 'Failed to process recovered JSON' : 'Failed to parse JSON'}
+        </div>
         <div className="text-red-600 text-sm mt-1">
           Original text: {jsonObject.originalText.substring(0, 100)}...
+          {jsonObject.warnings.length > 0 && (
+            <div className="mt-2">
+              <div className="text-red-700 text-xs font-medium mb-1">Recovery attempts made:</div>
+              <ul className="text-red-600 text-xs space-y-1">
+                {jsonObject.warnings.map((warning, idx) => (
+                  <li key={idx} className="flex items-start gap-1">
+                    <span>•</span>
+                    <span>{warning}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
         </div>
       </div>
     );
