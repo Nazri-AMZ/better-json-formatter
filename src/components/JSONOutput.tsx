@@ -251,10 +251,11 @@ interface JSONObjectCardProps {
   originalIndex: number;
   moliMode: boolean;
   onOpenPopup: (index: number) => void;
+  isExpanded: boolean;
+  onToggleExpansion: (isExpanded: boolean) => void;
 }
 
-function JSONObjectCard({ jsonObject, index, originalIndex, moliMode, onOpenPopup }: JSONObjectCardProps) {
-  const [isExpanded, setIsExpanded] = useState(true);
+function JSONObjectCard({ jsonObject, index, originalIndex, moliMode, onOpenPopup, isExpanded, onToggleExpansion }: JSONObjectCardProps) {
 
   const getStatusColor = () => {
     if (jsonObject.isValid)
