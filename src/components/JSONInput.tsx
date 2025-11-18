@@ -8,6 +8,7 @@ interface JSONInputProps {
   onChange: (value: string) => void;
   onProcess: () => void;
   isProcessing: boolean;
+  moliMode: boolean;
   placeholder?: string;
 }
 
