@@ -116,7 +116,6 @@ function JSONNode({ data, keyName, isLast, indent }: JSONNodeProps) {
               keyName={keyName}
               isLast={isLast}
               indent={indent}
-              globalExpandState={globalExpandState}
             />
           );
         } else {
@@ -126,7 +125,6 @@ function JSONNode({ data, keyName, isLast, indent }: JSONNodeProps) {
               keyName={keyName}
               isLast={isLast}
               indent={indent}
-              globalExpandState={globalExpandState}
             />
           );
         }
