@@ -1,16 +1,34 @@
 'use client';
 
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { ExtractedJSON, JSONProcessingState } from '@/types/json';
 import { JSONProcessor } from '@/lib/jsonProcessor';
 
 export function useJSONProcessor() {
-  const [state, setState] = useState<JSONProcessingState>({
-    jsonObjects: [],
-    isProcessing: false,
-    error: null,
-    inputText: ''
-  });
+  // Load initial state from localStorage
+  const getInitialState = (): JSONProcessingState => {
+    if (typeof window !== 'undefined') {
+      try {
+        const savedInputText = localStorage.getItem('json-formatter-input');
+        return {
+          jsonObjects: [],
+          isProcessing: false,
+          error: null,
+          inputText: savedInputText || ''
+        };
+      } catch (error) {
+        console.error('Failed to load input from localStorage:', error);
+      }
+    }
+    return {
+      jsonObjects: [],
+      isProcessing: false,
+      error: null,
+      inputText: ''
+    };
+  };
+
+  const [state, setState] = useState<JSONProcessingState>(getInitialState);
   const [moliMode, setMoliMode] = useState(false);
 
   const processor = new JSONProcessor();
