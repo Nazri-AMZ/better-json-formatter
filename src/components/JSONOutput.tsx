@@ -41,6 +41,11 @@ export default function JSONOutput({
     currentIndex: 0
   });
 
+  // Card expansion state management
+  const [cardExpansionState, setCardExpansionState] = useState<{
+    [key: string]: boolean;
+  }>({});
+
   // Filter JSON objects based on selected filter
   const filteredObjects = jsonObjects.filter((obj) => {
     if (filterType === "valid") return obj.isValid;
