@@ -220,6 +220,8 @@ export default function JSONOutput({
                 originalIndex={jsonObjects.indexOf(jsonObject)}
                 moliMode={moliMode}
                 onOpenPopup={openPopup}
+                isExpanded={cardExpansionState[jsonObject.id] !== false} // Default to expanded if not set
+                onToggleExpansion={(isExpanded) => updateCardExpansion(jsonObject.id, isExpanded)}
               />
             ))}
           </div>
