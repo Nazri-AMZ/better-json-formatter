@@ -37,7 +37,9 @@ export default function JSONOutput({
       {/* Header */}
       <div className="flex items-center justify-between p-4 border-b border-gray-200">
         <div className="flex items-center gap-3">
-          <h3 className="font-semibold text-gray-900">Output</h3>
+          <h3 className="font-semibold text-gray-900">
+            Output {moliMode && <span className="text-blue-600">(MOLI Mode)</span>}
+          </h3>
           <div className="flex items-center gap-2 text-sm">
             <span className="text-gray-500">{jsonObjects.length} JSON objects found</span>
             {validCount > 0 && (
@@ -51,6 +53,11 @@ export default function JSONOutput({
                 <AlertTriangle className="w-4 h-4" />
                 <span>{invalidCount}</span>
               </div>
+            )}
+            {moliMode && (
+              <span className="px-2 py-1 text-xs font-medium bg-blue-100 text-blue-700 rounded-full">
+                MOLI Active
+              </span>
             )}
           </div>
         </div>
