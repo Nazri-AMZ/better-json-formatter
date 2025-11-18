@@ -243,7 +243,6 @@ function ArrayNode({ data, keyName, isLast, indent }: JSONNodeProps) {
                 data={item}
                 isLast={index === data.length - 1}
                 indent={indent + 1}
-                globalExpandState={globalExpandState}
               />
             ))}
           </div>
