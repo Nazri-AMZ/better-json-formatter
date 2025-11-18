@@ -91,9 +91,9 @@ export default function Home() {
         )}
 
         {/* Side-by-side Layout */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 h-[calc(100vh-250px)]">
+        <div className="grid grid-cols-1 xl:grid-cols-2 gap-6 h-[calc(100vh-200px)]">
           {/* Input Section */}
-          <div className="flex flex-col">
+          <div className="flex flex-col min-h-0">
             <JSONInput
               value={inputText}
               onChange={setInputText}
@@ -104,7 +104,7 @@ export default function Home() {
           </div>
 
           {/* Output Section */}
-          <div className="flex flex-col">
+          <div className="flex flex-col min-h-0">
             <JSONOutput
               jsonObjects={jsonObjects}
               searchTerm={searchTerm}
