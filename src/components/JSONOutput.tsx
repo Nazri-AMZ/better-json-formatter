@@ -550,8 +550,8 @@ function JSONContentDisplay({
   );
 }
 
-function BeautifiedJSONDisplay({ data }: { data: any }) {
-  return <BeautifiedJSON data={data} />;
+function BeautifiedJSONDisplay({ data, globalExpandState }: { data: any; globalExpandState?: 'individual' | 'expanded' | 'collapsed' }) {
+  return <BeautifiedJSON data={data} globalExpandState={globalExpandState} />;
 }
 
 function TabularJSONDisplay({ data }: { data: any }) {
