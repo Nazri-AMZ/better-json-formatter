@@ -189,7 +189,6 @@ function ObjectNode({ data, keyName, isLast, indent }: JSONNodeProps) {
                 keyName={key}
                 isLast={index === entries.length - 1}
                 indent={indent + 1}
-                globalExpandState={globalExpandState}
               />
             ))}
           </div>
