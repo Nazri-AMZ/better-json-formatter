@@ -247,6 +247,43 @@ function JSONObjectCard({ jsonObject, index, moliMode }: JSONObjectCardProps) {
         </div>
       </div>
 
+      {/* MOLI Metadata */}
+      {moliMode && jsonObject.moliMetadata && isExpanded && (
+        <div className="px-3 py-2 bg-blue-50 border-b border-blue-200">
+          <div className="text-xs font-medium text-blue-800 mb-2">MOLI Metadata:</div>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3 text-xs">
+            {jsonObject.moliMetadata.service && (
+              <div className="flex items-center gap-1 text-blue-700">
+                <Server className="w-3 h-3" />
+                <span className="font-medium">Service:</span>
+                <span>{jsonObject.moliMetadata.service}</span>
+              </div>
+            )}
+            {jsonObject.moliMetadata.controller && (
+              <div className="flex items-center gap-1 text-blue-700">
+                <User className="w-3 h-3" />
+                <span className="font-medium">Controller:</span>
+                <span>{jsonObject.moliMetadata.controller}</span>
+              </div>
+            )}
+            {jsonObject.moliMetadata.timestamp && (
+              <div className="flex items-center gap-1 text-blue-700">
+                <Clock className="w-3 h-3" />
+                <span className="font-medium">Time:</span>
+                <span>{new Date(jsonObject.moliMetadata.timestamp).toLocaleTimeString()}</span>
+              </div>
+            )}
+            {jsonObject.moliMetadata.traceId && (
+              <div className="flex items-center gap-1 text-blue-700">
+                <Activity className="w-3 h-3" />
+                <span className="font-medium">Trace ID:</span>
+                <span className="font-mono">{jsonObject.moliMetadata.traceId.substring(0, 8)}...</span>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
       {/* Warnings */}
       {jsonObject.warnings.length > 0 && isExpanded && (
         <div className="px-3 py-2 bg-yellow-50 border-b border-yellow-200">
@@ -265,7 +302,7 @@ function JSONObjectCard({ jsonObject, index, moliMode }: JSONObjectCardProps) {
       {/* Content */}
       {isExpanded && (
         <div className="p-4">
-          <JSONContentDisplay jsonObject={jsonObject} />
+          <JSONContentDisplay jsonObject={jsonObject} moliMode={moliMode} />
         </div>
       )}
     </div>
