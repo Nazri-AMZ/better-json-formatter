@@ -46,6 +46,35 @@ export default function Home() {
             </div>
 
             <div className="flex items-center gap-4">
+              {/* MOLI Mode Toggle */}
+              <div className="flex items-center gap-2">
+                <span className="text-sm font-medium text-gray-700">MOLI Mode</span>
+                <button
+                  onClick={() => setMoliMode(!moliMode)}
+                  className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
+                    moliMode ? 'bg-blue-600' : 'bg-gray-200'
+                  }`}
+                >
+                  <span
+                    className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+                      moliMode ? 'translate-x-6' : 'translate-x-1'
+                    }`}
+                  />
+                </button>
+              </div>
+
+              <a
+                href="https://github.com"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-2 px-3 py-2 text-sm text-gray-700 hover:text-gray-900 hover:bg-gray-100 rounded-md transition-colors"
+              >
+                <Github className="w-4 h-4" />
+                GitHub
+              </a>
+            </div>
+
+            <div className="flex items-center gap-4">
               <a
                 href="https://github.com"
                 target="_blank"
