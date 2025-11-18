@@ -283,20 +283,41 @@ export class JSONProcessor {
    */
   private extractMOLILogs(text: string): ExtractedJSON[] {
     const jsonObjects: ExtractedJSON[] = [];
-    const lines = text.split('\n');
 
+    // First try to find JSON objects using improved regex patterns
+    const jsonPattern = /(\{[^{}]*(?:\{[^{}]*\}[^{}]*)*\})/g;
+    let match;
+    const foundJsonObjects: string[] = [];
+
+    while ((match = jsonPattern.exec(text)) !== null) {
+      const jsonText = match[1];
+      foundJsonObjects.push(jsonText);
+    }
+
+    // If we found JSON objects with regex, process them directly
+    if (foundJsonObjects.length > 0) {
+      for (const jsonText of foundJsonObjects) {
+        const processedObject = this.processMOLIJsonText(jsonText, text.indexOf(jsonText));
+        if (processedObject) {
+          jsonObjects.push(processedObject);
+        }
+      }
+      return jsonObjects;
+    }
+
+    // Fallback to line-by-line processing for edge cases
+    const lines = text.split('\n');
     let currentJsonText = '';
     let braceCount = 0;
     let bracketCount = 0;
     let inJsonString = false;
     let startIndex = -1;
-    let lineIndex = 0;
 
     for (let i = 0; i < lines.length; i++) {
-      const line = lines[i].trim();
+      const line = lines[i];
 
       // Skip empty lines and lines that are clearly text separators
-      if (!line || line.match(/^(request|response)\s+\d+:/i)) {
+      if (!line.trim() || line.trim().match(/^(request|response)\s+\d+:/i)) {
         // If we have accumulated JSON text, process it
         if (currentJsonText.trim()) {
           const processedObject = this.processMOLIJsonText(currentJsonText, startIndex);
@@ -315,7 +336,7 @@ export class JSONProcessor {
       // Check if line starts a JSON object
       if (line.includes('{') && braceCount === 0 && bracketCount === 0) {
         if (startIndex === -1) {
-          startIndex = text.indexOf(line, lineIndex);
+          startIndex = text.indexOf(line);
         }
       }
 
@@ -336,7 +357,6 @@ export class JSONProcessor {
       }
 
       currentJsonText += (currentJsonText ? ' ' : '') + line;
-      lineIndex += lines[i].length + 1; // +1 for newline
 
       // If we've closed all braces and brackets, we have a complete JSON object
       if (braceCount === 0 && bracketCount === 0 && currentJsonText.trim()) {
