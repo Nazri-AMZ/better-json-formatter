@@ -17,7 +17,8 @@ export default function JSONInput({
   onChange,
   onProcess,
   isProcessing,
-  placeholder = "Paste your JSON or request/response logs here... Multiple JSON objects are supported, even if embedded in text."
+  moliMode,
+  placeholder = moliMode ? "Paste MOLI request/response logs here..." : "Paste your JSON or request/response logs here... Multiple JSON objects are supported, even if embedded in text."
 }: JSONInputProps) {
   const [charCount, setCharCount] = useState(0);
   const [lineCount, setLineCount] = useState(1);
