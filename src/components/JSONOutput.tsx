@@ -35,49 +35,18 @@ export default function JSONOutput({
   onFilterChange,
   moliMode,
 }: JSONOutputProps) {
-  const { globalState, expandAll, collapseAll, resetToIndividual } = useGlobalExpandControls();
-
   // Popup state management
   const [popupState, setPopupState] = useState({
     isOpen: false,
     currentIndex: 0
   });
 
-  // Filter JSON objects based on selected filter and search term
+  // Filter JSON objects based on selected filter
   const filteredObjects = jsonObjects.filter((obj) => {
-    // Apply filter type
     if (filterType === "valid") return obj.isValid;
     if (filterType === "invalid") return !obj.isValid;
-
-    // Apply search functionality
-    if (!searchTerm) return true;
-
-    return isObjectMatch(obj, searchTerm);
+    return true;
   });
-
-  // Search within JSON content
-  const isObjectMatch = (obj: ExtractedJSON, searchTerm: string): boolean => {
-    if (!obj.parsedData || !searchTerm) return true;
-
-    const searchLower = searchTerm.toLowerCase();
-    const content = JSON.stringify(obj.parsedData).toLowerCase();
-
-    // Search in JSON content
-    if (content.includes(searchLower)) return true;
-
-    // Search in MOLI metadata
-    if (obj.moliMetadata) {
-      const metadata = [
-        obj.moliMetadata.service,
-        obj.moliMetadata.controller,
-        obj.moliMetadata.traceId
-      ].filter(Boolean).join(' ').toLowerCase();
-
-      if (metadata.includes(searchLower)) return true;
-    }
-
-    return false;
-  };
 
   // Popup handlers
   const openPopup = (index: number) => {
