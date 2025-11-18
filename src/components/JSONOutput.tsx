@@ -460,7 +460,7 @@ function JSONObjectCard({ jsonObject, index, originalIndex, moliMode, globalExpa
       {/* Content */}
       {isExpanded && (
         <div className="p-4">
-          <JSONContentDisplay jsonObject={jsonObject} moliMode={moliMode} />
+          <JSONContentDisplay jsonObject={jsonObject} moliMode={moliMode} globalExpandState={globalExpandState} />
         </div>
       )}
     </div>
