@@ -19,7 +19,8 @@ export default function JSONOutput({
   searchTerm,
   onSearchChange,
   filterType,
-  onFilterChange
+  onFilterChange,
+  moliMode
 }: JSONOutputProps) {
   // Filter JSON objects based on selected filter
   const filteredObjects = jsonObjects.filter(obj => {
