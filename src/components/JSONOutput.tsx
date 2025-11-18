@@ -35,13 +35,13 @@ export default function JSONOutput({
   return (
     <div className="flex flex-col h-full bg-white rounded-lg border border-gray-200">
       {/* Header */}
-      <div className="flex items-center justify-between p-4 border-b border-gray-200">
+      <div className="flex items-center justify-between p-4 border-b border-gray-200 flex-shrink-0">
         <div className="flex items-center gap-3">
           <h3 className="font-semibold text-gray-900">
             Output {moliMode && <span className="text-blue-600">(MOLI Mode)</span>}
           </h3>
           <div className="flex items-center gap-2 text-sm">
-            <span className="text-gray-500">{jsonObjects.length} JSON objects found</span>
+            <span className="text-gray-600">{jsonObjects.length} JSON objects found</span>
             {validCount > 0 && (
               <div className="flex items-center gap-1 text-green-600">
                 <CheckCircle className="w-4 h-4" />
@@ -64,7 +64,7 @@ export default function JSONOutput({
       </div>
 
       {/* Search and Filter */}
-      <div className="flex items-center gap-3 p-4 border-b border-gray-200 bg-gray-50">
+      <div className="flex items-center gap-3 p-4 border-b border-gray-200 bg-gray-50 flex-shrink-0">
         <div className="flex-1 relative">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
           <input
@@ -72,16 +72,16 @@ export default function JSONOutput({
             value={searchTerm}
             onChange={(e) => onSearchChange(e.target.value)}
             placeholder="Search JSON objects..."
-            className="w-full pl-10 pr-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            className="w-full pl-10 pr-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 placeholder-gray-600"
           />
         </div>
 
         <div className="flex items-center gap-2">
-          <Filter className="w-4 h-4 text-gray-400" />
+          <Filter className="w-4 h-4 text-gray-600" />
           <select
             value={filterType}
             onChange={(e) => onFilterChange(e.target.value as 'all' | 'valid' | 'invalid')}
-            className="text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            className="text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900"
           >
             <option value="all">All ({jsonObjects.length})</option>
             <option value="valid">Valid ({validCount})</option>
@@ -91,7 +91,7 @@ export default function JSONOutput({
       </div>
 
       {/* JSON Objects List */}
-      <div className="flex-1 overflow-y-auto p-4">
+      <div className="flex-1 overflow-y-auto p-4 min-h-0">
         {jsonObjects.length === 0 ? (
           <div className="flex flex-col items-center justify-center h-full text-gray-400">
             <XCircle className="w-12 h-12 mb-3" />
