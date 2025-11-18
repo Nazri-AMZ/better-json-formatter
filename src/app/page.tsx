@@ -67,7 +67,7 @@ export default function Home() {
                 </button>
               </div>
 
-              <a
+              {/* <a
                 href="https://github.com"
                 target="_blank"
                 rel="noopener noreferrer"
@@ -75,7 +75,7 @@ export default function Home() {
               >
                 <Github className="w-4 h-4" />
                 GitHub
-              </a>
+              </a> */}
             </div>
           </div>
         </div>

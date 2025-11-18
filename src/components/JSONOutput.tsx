@@ -38,7 +38,7 @@ export default function JSONOutput({
   // Popup state management
   const [popupState, setPopupState] = useState({
     isOpen: false,
-    currentIndex: 0
+    currentIndex: 0,
   });
 
   // Card expansion state management
@@ -57,35 +57,35 @@ export default function JSONOutput({
   const openPopup = (index: number) => {
     setPopupState({
       isOpen: true,
-      currentIndex: index
+      currentIndex: index,
     });
   };
 
   const closePopup = () => {
     setPopupState({
       isOpen: false,
-      currentIndex: 0
+      currentIndex: 0,
     });
   };
 
   const goToPrevious = () => {
-    setPopupState(prev => ({
+    setPopupState((prev) => ({
       ...prev,
-      currentIndex: Math.max(0, prev.currentIndex - 1)
+      currentIndex: Math.max(0, prev.currentIndex - 1),
     }));
   };
 
   const goToNext = () => {
-    setPopupState(prev => ({
+    setPopupState((prev) => ({
       ...prev,
-      currentIndex: Math.min(jsonObjects.length - 1, prev.currentIndex + 1)
+      currentIndex: Math.min(jsonObjects.length - 1, prev.currentIndex + 1),
     }));
   };
 
   // Card expansion handlers
   const expandAllCards = () => {
     const allExpanded: { [key: string]: boolean } = {};
-    jsonObjects.forEach(obj => {
+    jsonObjects.forEach((obj) => {
       allExpanded[obj.id] = true;
     });
     setCardExpansionState(allExpanded);
@@ -93,16 +93,16 @@ export default function JSONOutput({
 
   const closeAllCards = () => {
     const allCollapsed: { [key: string]: boolean } = {};
-    jsonObjects.forEach(obj => {
+    jsonObjects.forEach((obj) => {
       allCollapsed[obj.id] = false;
     });
     setCardExpansionState(allCollapsed);
   };
 
   const updateCardExpansion = (cardId: string, isExpanded: boolean) => {
-    setCardExpansionState(prev => ({
+    setCardExpansionState((prev) => ({
       ...prev,
-      [cardId]: isExpanded
+      [cardId]: isExpanded,
     }));
   };
 
@@ -112,121 +112,125 @@ export default function JSONOutput({
   return (
     <>
       <div className="flex flex-col h-full bg-white rounded-lg border border-gray-200">
-      {/* Header */}
-      <div className="flex items-center justify-between p-4 border-b border-gray-200 flex-shrink-0">
-        <div className="flex items-center gap-3">
-          <h3 className="font-semibold text-gray-900">
-            Output{" "}
-            {moliMode && <span className="text-blue-600">(MOLI Mode)</span>}
-          </h3>
-          <div className="flex items-center gap-2 text-sm">
-            <span className="text-gray-600">
-              {jsonObjects.length} JSON objects found
-            </span>
-            {validCount > 0 && (
-              <div className="flex items-center gap-1 text-green-600">
-                <CheckCircle className="w-4 h-4" />
-                <span>{validCount}</span>
-              </div>
-            )}
-            {invalidCount > 0 && (
-              <div className="flex items-center gap-1 text-red-600">
-                <AlertTriangle className="w-4 h-4" />
-                <span>{invalidCount}</span>
-              </div>
-            )}
-            {moliMode && (
-              <span className="px-2 py-1 text-xs font-medium bg-blue-100 text-blue-700 rounded-full">
-                MOLI Active
+        {/* Header */}
+        <div className="flex items-center justify-between p-4 border-b border-gray-200 flex-shrink-0">
+          <div className="flex items-center gap-3">
+            <h3 className="font-semibold text-gray-900">
+              Output{" "}
+              {moliMode && <span className="text-blue-600">(MOLI Mode)</span>}
+            </h3>
+            <div className="flex items-center gap-2 text-sm">
+              <span className="text-gray-600">
+                {jsonObjects.length} JSON objects found
               </span>
-            )}
+              {validCount > 0 && (
+                <div className="flex items-center gap-1 text-green-600">
+                  <CheckCircle className="w-4 h-4" />
+                  <span>{validCount}</span>
+                </div>
+              )}
+              {invalidCount > 0 && (
+                <div className="flex items-center gap-1 text-red-600">
+                  <AlertTriangle className="w-4 h-4" />
+                  <span>{invalidCount}</span>
+                </div>
+              )}
+              {moliMode && (
+                <span className="px-2 py-1 text-xs font-medium bg-blue-100 text-blue-700 rounded-full">
+                  MOLI Active
+                </span>
+              )}
+            </div>
           </div>
         </div>
-      </div>
 
-      {/* Search and Filter */}
-      <div className="flex items-center gap-3 p-4 border-b border-gray-200 bg-gray-50 flex-shrink-0">
-        <div className="flex-1 relative">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-600" />
-          <input
-            type="text"
-            value={searchTerm}
-            onChange={(e) => onSearchChange(e.target.value)}
-            placeholder="Search JSON objects..."
-            className="w-full pl-10 pr-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 placeholder-gray-600"
-          />
+        {/* Search and Filter */}
+        <div className="flex items-center gap-3 p-4 border-b border-gray-200 bg-gray-50 flex-shrink-0">
+          <div className="flex-1 relative">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-600" />
+            <input
+              type="text"
+              value={searchTerm}
+              onChange={(e) => onSearchChange(e.target.value)}
+              placeholder="Search JSON objects..."
+              className="w-full pl-10 pr-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 placeholder-gray-600"
+            />
+          </div>
+
+          <div className="flex items-center gap-2">
+            <Filter className="w-4 h-4 text-gray-600" />
+            <select
+              value={filterType}
+              onChange={(e) =>
+                onFilterChange(e.target.value as "all" | "valid" | "invalid")
+              }
+              className="text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900"
+            >
+              <option value="all">All ({jsonObjects.length})</option>
+              <option value="valid">Valid ({validCount})</option>
+              <option value="invalid">Invalid ({invalidCount})</option>
+            </select>
+          </div>
+
+          {/* Expand/Close All Cards Controls */}
+          <div className="flex items-center gap-2 border-l border-gray-200 pl-3">
+            <button
+              onClick={expandAllCards}
+              className="text-xs px-2 py-1 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded transition-colors"
+              title="Expand all JSON cards"
+            >
+              Expand All
+            </button>
+            <button
+              onClick={closeAllCards}
+              className="text-xs px-2 py-1 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded transition-colors"
+              title="Close all JSON cards"
+            >
+              Close All
+            </button>
+          </div>
         </div>
 
-        <div className="flex items-center gap-2">
-          <Filter className="w-4 h-4 text-gray-600" />
-          <select
-            value={filterType}
-            onChange={(e) =>
-              onFilterChange(e.target.value as "all" | "valid" | "invalid")
-            }
-            className="text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900"
-          >
-            <option value="all">All ({jsonObjects.length})</option>
-            <option value="valid">Valid ({validCount})</option>
-            <option value="invalid">Invalid ({invalidCount})</option>
-          </select>
+        {/* JSON Objects List */}
+        <div className="flex-1 overflow-y-auto p-4 min-h-0">
+          {jsonObjects.length === 0 ? (
+            <div className="flex flex-col items-center justify-center h-full text-gray-400">
+              <XCircle className="w-12 h-12 mb-3" />
+              <h3 className="text-lg font-medium mb-1">
+                No JSON objects found
+              </h3>
+              <p className="text-sm text-center max-w-md">
+                Paste some JSON or log text in the input area and click "Process
+                JSON" to see results here.
+              </p>
+            </div>
+          ) : filteredObjects.length === 0 ? (
+            <div className="flex flex-col items-center justify-center h-full text-gray-400">
+              <Filter className="w-12 h-12 mb-3" />
+              <h3 className="text-lg font-medium mb-1">No results found</h3>
+              <p className="text-sm text-center max-w-md">
+                Try adjusting your search terms or filter settings.
+              </p>
+            </div>
+          ) : (
+            <div className="space-y-4">
+              {filteredObjects.map((jsonObject, index) => (
+                <JSONObjectCard
+                  key={jsonObject.id}
+                  jsonObject={jsonObject}
+                  index={jsonObjects.indexOf(jsonObject) + 1}
+                  originalIndex={jsonObjects.indexOf(jsonObject)}
+                  moliMode={moliMode}
+                  onOpenPopup={openPopup}
+                  isExpanded={cardExpansionState[jsonObject.id] !== false} // Default to expanded if not set
+                  onToggleExpansion={(isExpanded) =>
+                    updateCardExpansion(jsonObject.id, isExpanded)
+                  }
+                />
+              ))}
+            </div>
+          )}
         </div>
-
-        {/* Expand/Close All Cards Controls */}
-        <div className="flex items-center gap-2 border-l border-gray-200 pl-3">
-          <button
-            onClick={expandAllCards}
-            className="text-xs px-2 py-1 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded transition-colors"
-            title="Expand all JSON cards"
-          >
-            Expand All
-          </button>
-          <button
-            onClick={closeAllCards}
-            className="text-xs px-2 py-1 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded transition-colors"
-            title="Close all JSON cards"
-          >
-            Close All
-          </button>
-        </div>
-      </div>
-
-      {/* JSON Objects List */}
-      <div className="flex-1 overflow-y-auto p-4 min-h-0">
-        {jsonObjects.length === 0 ? (
-          <div className="flex flex-col items-center justify-center h-full text-gray-400">
-            <XCircle className="w-12 h-12 mb-3" />
-            <h3 className="text-lg font-medium mb-1">No JSON objects found</h3>
-            <p className="text-sm text-center max-w-md">
-              Paste some JSON or log text in the input area and click "Process
-              JSON" to see results here.
-            </p>
-          </div>
-        ) : filteredObjects.length === 0 ? (
-          <div className="flex flex-col items-center justify-center h-full text-gray-400">
-            <Filter className="w-12 h-12 mb-3" />
-            <h3 className="text-lg font-medium mb-1">No results found</h3>
-            <p className="text-sm text-center max-w-md">
-              Try adjusting your search terms or filter settings.
-            </p>
-          </div>
-        ) : (
-          <div className="space-y-4">
-            {filteredObjects.map((jsonObject, index) => (
-              <JSONObjectCard
-                key={jsonObject.id}
-                jsonObject={jsonObject}
-                index={jsonObjects.indexOf(jsonObject) + 1}
-                originalIndex={jsonObjects.indexOf(jsonObject)}
-                moliMode={moliMode}
-                onOpenPopup={openPopup}
-                isExpanded={cardExpansionState[jsonObject.id] !== false} // Default to expanded if not set
-                onToggleExpansion={(isExpanded) => updateCardExpansion(jsonObject.id, isExpanded)}
-              />
-            ))}
-          </div>
-        )}
-      </div>
       </div>
 
       {/* Fullscreen Popup */}
@@ -255,8 +259,15 @@ interface JSONObjectCardProps {
   onToggleExpansion: (isExpanded: boolean) => void;
 }
 
-function JSONObjectCard({ jsonObject, index, originalIndex, moliMode, onOpenPopup, isExpanded, onToggleExpansion }: JSONObjectCardProps) {
-
+function JSONObjectCard({
+  jsonObject,
+  index,
+  originalIndex,
+  moliMode,
+  onOpenPopup,
+  isExpanded,
+  onToggleExpansion,
+}: JSONObjectCardProps) {
   const getStatusColor = () => {
     if (jsonObject.isValid)
       return "text-green-600 bg-green-50 border-green-200";
@@ -386,12 +397,12 @@ function JSONObjectCard({ jsonObject, index, originalIndex, moliMode, onOpenPopu
             <Maximize2 className="w-3 h-3" />
             Fullscreen
           </button>
-          <span>•</span>
+          {/* <span>•</span>
           <span>
             Position: {jsonObject.startIndex}-{jsonObject.endIndex}
           </span>
           <span>•</span>
-          <span>{jsonObject.originalText.length} chars</span>
+          <span>{jsonObject.originalText.length} chars</span> */}
         </div>
       </div>
 

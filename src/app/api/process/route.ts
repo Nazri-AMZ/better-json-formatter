@@ -1,25 +1,30 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(request: NextRequest) {
   try {
     const { inputText, moliMode } = await request.json();
 
+    const inputLength = inputText?.length || 0;
+
     // Simple echo for debugging
-    console.log('API received:', { inputText, moliMode, inputLength: inputText?.length || 0 });
+    console.log("API received:", { inputText, moliMode, inputLength });
 
     return NextResponse.json({
       success: true,
-      message: 'Request received',
+      message: "Request received",
       receivedData: {
         inputText,
         moliMode,
-        inputLength
-      }
+        inputLength,
+      },
     });
   } catch (error) {
-    console.error('API Error:', error);
+    console.error("API Error:", error);
     return NextResponse.json(
-      { error: 'Failed to process request', details: error instanceof Error ? error.message : 'Unknown error' },
+      {
+        error: "Failed to process request",
+        details: error instanceof Error ? error.message : "Unknown error",
+      },
       { status: 500 }
     );
   }
@@ -27,7 +32,7 @@ export async function POST(request: NextRequest) {
 
 export async function GET() {
   return NextResponse.json({
-    message: 'API endpoint is ready',
-    timestamp: new Date().toISOString()
+    message: "API endpoint is ready",
+    timestamp: new Date().toISOString(),
   });
 }
