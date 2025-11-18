@@ -1,4 +1,4 @@
-import { ExtractedJSON, TabularRow, ValidationResult } from '@/types/json';
+import { ExtractedJSON, TabularRow, ValidationResult, MOLIMetadata, MOLILogType } from '@/types/json';
 
 export class JSONProcessor {
 
