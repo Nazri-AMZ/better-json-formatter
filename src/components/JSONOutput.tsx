@@ -229,6 +229,18 @@ export default function JSONOutput({
         )}
       </div>
     </div>
+
+    {/* Fullscreen Popup */}
+    <FullscreenJSONPopup
+      jsonObject={jsonObjects[popupState.currentIndex] || null}
+      allObjects={jsonObjects}
+      currentIndex={popupState.currentIndex}
+      isOpen={popupState.isOpen}
+      onClose={closePopup}
+      onPrevious={goToPrevious}
+      onNext={goToNext}
+      moliMode={moliMode}
+    />
   );
 }
 
