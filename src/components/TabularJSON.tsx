@@ -258,20 +258,26 @@ export default function TabularJSON({ data, onCopy, onDownload }: TabularJSONPro
           <tbody className="divide-y divide-gray-200">
             {filteredData.map((row, index) => (
               <tr key={index} className="hover:bg-gray-50 transition-colors">
-                <td className="px-4 py-3 text-sm font-mono text-gray-900">
-                  {row.path}
-                </td>
-                <td className="px-4 py-3 text-sm text-gray-700 max-w-md truncate" title={row.value}>
-                  {formatValue(row.value, row.type)}
-                </td>
-                <td className="px-4 py-3">
+                <HoverCopyCell value={row.path} className="px-4 py-3">
+                  <div className="text-sm font-mono text-gray-900">
+                    {row.path}
+                  </div>
+                </HoverCopyCell>
+                <HoverCopyCell value={row.value} className="px-4 py-3">
+                  <div className="text-sm text-gray-700 max-w-md truncate" title={row.value}>
+                    {formatValue(row.value, row.type)}
+                  </div>
+                </HoverCopyCell>
+                <HoverCopyCell value={row.type} className="px-4 py-3">
                   <span className={`inline-flex px-2 py-1 text-xs font-medium rounded-full ${getTypeColor(row.type)}`}>
                     {row.type}
                   </span>
-                </td>
-                <td className="px-4 py-3 text-sm text-gray-500">
-                  {row.size !== undefined ? row.size : '-'}
-                </td>
+                </HoverCopyCell>
+                <HoverCopyCell value={row.size} className="px-4 py-3">
+                  <div className="text-sm text-gray-500">
+                    {row.size !== undefined ? row.size : '-'}
+                  </div>
+                </HoverCopyCell>
               </tr>
             ))}
           </tbody>
