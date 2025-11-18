@@ -128,9 +128,10 @@ export default function JSONOutput({
 interface JSONObjectCardProps {
   jsonObject: ExtractedJSON;
   index: number;
+  moliMode: boolean;
 }
 
-function JSONObjectCard({ jsonObject, index }: JSONObjectCardProps) {
+function JSONObjectCard({ jsonObject, index, moliMode }: JSONObjectCardProps) {
   const [isExpanded, setIsExpanded] = useState(true);
 
   const getStatusColor = () => {
