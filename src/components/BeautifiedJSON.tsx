@@ -133,6 +133,15 @@ function JSONNode({ data, keyName, isLast, indent, globalExpandState }: JSONNode
   const [isExpanded, setIsExpanded] = useState(true);
   const indentSize = 2;
 
+  // Handle global expand/collapse state
+  useEffect(() => {
+    if (globalExpandState === 'expanded') {
+      setIsExpanded(true);
+    } else if (globalExpandState === 'collapsed') {
+      setIsExpanded(false);
+    }
+  }, [globalExpandState]);
+
   const getValueType = (value: any): string => {
     if (value === null) return 'null';
     if (Array.isArray(value)) return 'array';
