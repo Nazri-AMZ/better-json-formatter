@@ -149,6 +149,45 @@ function JSONObjectCard({ jsonObject, index, moliMode }: JSONObjectCardProps) {
     return 'Invalid';
   };
 
+  const getMOLILogTypeIcon = () => {
+    if (!jsonObject.moliMetadata) return null;
+
+    switch (jsonObject.moliMetadata.logType) {
+      case MOLILogType.REQUEST:
+        return <Activity className="w-4 h-4" />;
+      case MOLILogType.RESPONSE:
+        return <CheckCircle className="w-4 h-4" />;
+      default:
+        return <AlertTriangle className="w-4 h-4" />;
+    }
+  };
+
+  const getMOLILogTypeColor = () => {
+    if (!jsonObject.moliMetadata) return 'text-gray-600 bg-gray-50 border-gray-200';
+
+    switch (jsonObject.moliMetadata.logType) {
+      case MOLILogType.REQUEST:
+        return 'text-blue-600 bg-blue-50 border-blue-200';
+      case MOLILogType.RESPONSE:
+        return 'text-green-600 bg-green-50 border-green-200';
+      default:
+        return 'text-gray-600 bg-gray-50 border-gray-200';
+    }
+  };
+
+  const getMOLILogTypeText = () => {
+    if (!jsonObject.moliMetadata) return 'Unknown';
+
+    switch (jsonObject.moliMetadata.logType) {
+      case MOLILogType.REQUEST:
+        return 'Request';
+      case MOLILogType.RESPONSE:
+        return 'Response';
+      default:
+        return 'Unknown';
+    }
+  };
+
   return (
     <div className="border border-gray-200 rounded-lg overflow-hidden">
       {/* Header */}
