@@ -35,12 +35,78 @@ export default function JSONOutput({
   onFilterChange,
   moliMode,
 }: JSONOutputProps) {
-  // Filter JSON objects based on selected filter
+  const { globalState, expandAll, collapseAll, resetToIndividual } = useGlobalExpandControls();
+
+  // Popup state management
+  const [popupState, setPopupState] = useState({
+    isOpen: false,
+    currentIndex: 0
+  });
+
+  // Filter JSON objects based on selected filter and search term
   const filteredObjects = jsonObjects.filter((obj) => {
+    // Apply filter type
     if (filterType === "valid") return obj.isValid;
     if (filterType === "invalid") return !obj.isValid;
-    return true;
+
+    // Apply search functionality
+    if (!searchTerm) return true;
+
+    return isObjectMatch(obj, searchTerm);
   });
+
+  // Search within JSON content
+  const isObjectMatch = (obj: ExtractedJSON, searchTerm: string): boolean => {
+    if (!obj.parsedData || !searchTerm) return true;
+
+    const searchLower = searchTerm.toLowerCase();
+    const content = JSON.stringify(obj.parsedData).toLowerCase();
+
+    // Search in JSON content
+    if (content.includes(searchLower)) return true;
+
+    // Search in MOLI metadata
+    if (obj.moliMetadata) {
+      const metadata = [
+        obj.moliMetadata.service,
+        obj.moliMetadata.controller,
+        obj.moliMetadata.traceId
+      ].filter(Boolean).join(' ').toLowerCase();
+
+      if (metadata.includes(searchLower)) return true;
+    }
+
+    return false;
+  };
+
+  // Popup handlers
+  const openPopup = (index: number) => {
+    setPopupState({
+      isOpen: true,
+      currentIndex: index
+    });
+  };
+
+  const closePopup = () => {
+    setPopupState({
+      isOpen: false,
+      currentIndex: 0
+    });
+  };
+
+  const goToPrevious = () => {
+    setPopupState(prev => ({
+      ...prev,
+      currentIndex: Math.max(0, prev.currentIndex - 1)
+    }));
+  };
+
+  const goToNext = () => {
+    setPopupState(prev => ({
+      ...prev,
+      currentIndex: Math.min(jsonObjects.length - 1, prev.currentIndex + 1)
+    }));
+  };
 
   const validCount = jsonObjects.filter((obj) => obj.isValid).length;
   const invalidCount = jsonObjects.length - validCount;
