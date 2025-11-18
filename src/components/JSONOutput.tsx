@@ -375,6 +375,18 @@ function JSONObjectCard({ jsonObject, index, originalIndex, moliMode, globalExpa
         </div>
 
         <div className="flex items-center gap-2 text-sm text-gray-500">
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              onOpenPopup(originalIndex);
+            }}
+            className="flex items-center gap-1 px-2 py-1 text-xs bg-blue-600 text-white hover:bg-blue-700 rounded transition-colors"
+            title="Open in fullscreen"
+          >
+            <Maximize2 className="w-3 h-3" />
+            Fullscreen
+          </button>
+          <span>•</span>
           <span>
             Position: {jsonObject.startIndex}-{jsonObject.endIndex}
           </span>
