@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { useJSONProcessor } from '@/hooks/useJSONProcessor';
 import JSONInput from '@/components/JSONInput';
 import JSONOutput from '@/components/JSONOutput';
-import { Sparkles, Code, FileJson, Github } from 'lucide-react';
+import { Sparkles, Code, FileJson, Github, Toggle } from 'lucide-react';
 
 export default function Home() {
   const {
