@@ -172,7 +172,6 @@ export default function JSONOutput({
                 index={jsonObjects.indexOf(jsonObject) + 1}
                 originalIndex={jsonObjects.indexOf(jsonObject)}
                 moliMode={moliMode}
-                globalExpandState={globalState}
                 onOpenPopup={openPopup}
               />
             ))}
