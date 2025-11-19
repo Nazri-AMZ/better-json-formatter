@@ -95,7 +95,7 @@ export default function Home() {
         )}
 
         {/* Side-by-side Layout */}
-        <div className="grid grid-cols-1 xl:grid-cols-2 gap-6 h-[calc(100vh-200px)]">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:h-[calc(100vh-200px)] h-auto">
           {/* Input Section */}
           <div className="flex flex-col min-h-0">
             <JSONInput
