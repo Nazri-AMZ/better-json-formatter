@@ -13,6 +13,8 @@ import {
   Server,
   User,
   Maximize2,
+  Check,
+  Copy,
 } from "lucide-react";
 import BeautifiedJSON from "@/components/BeautifiedJSON";
 import TabularJSON from "@/components/TabularJSON";
@@ -192,7 +194,7 @@ export default function JSONOutput({
         </div>
 
         {/* JSON Objects List */}
-        <div className="flex-1 overflow-y-auto p-4 min-h-0">
+        <div className="flex-1 overflow-y-auto p-4 min-h-[40vh] md:min-h-0">
           {jsonObjects.length === 0 ? (
             <div className="flex flex-col items-center justify-center h-full text-gray-400">
               <XCircle className="w-12 h-12 mb-3" />
@@ -268,6 +270,19 @@ function JSONObjectCard({
   isExpanded,
   onToggleExpansion,
 }: JSONObjectCardProps) {
+  const [copied, setCopied] = useState(false);
+
+  const handleCopy = async () => {
+    const jsonString = jsonObject.moliMetadata?.traceId?.toString();
+    try {
+      await navigator.clipboard.writeText(jsonString ?? "");
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch (error) {
+      // Fallback
+    }
+  };
+
   const getStatusColor = () => {
     if (jsonObject.isValid)
       return "text-green-600 bg-green-50 border-green-200";
@@ -445,6 +460,21 @@ function JSONObjectCard({
                 <span className="font-mono">
                   {jsonObject.moliMetadata.traceId}
                 </span>
+                <button
+                  onClick={handleCopy}
+                  className="p-1 "
+                  title="Copy to clipboard"
+                >
+                  {copied ? (
+                    <>
+                      <Check className="w-3 h-3 text-green-600" />
+                    </>
+                  ) : (
+                    <>
+                      <Copy className="w-3 h-3 text-gray-700" />
+                    </>
+                  )}
+                </button>
               </div>
             )}
           </div>

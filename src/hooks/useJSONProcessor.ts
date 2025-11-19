@@ -1,95 +1,124 @@
-'use client';
+"use client";
 
-import { useState, useCallback } from 'react';
-import { ExtractedJSON, JSONProcessingState } from '@/types/json';
-import { JSONProcessor } from '@/lib/jsonProcessor';
+import { useState, useCallback, useEffect } from "react";
+import { ExtractedJSON, JSONProcessingState } from "@/types/json";
+import { JSONProcessor } from "@/lib/jsonProcessor";
 
 export function useJSONProcessor() {
   const [state, setState] = useState<JSONProcessingState>({
     jsonObjects: [],
     isProcessing: false,
     error: null,
-    inputText: ''
+    inputText: "",
   });
   const [moliMode, setMoliMode] = useState(false);
 
   const processor = new JSONProcessor();
 
-  const processJSON = useCallback(async (inputText: string) => {
-    if (!inputText.trim()) {
-      setState(prev => ({
+  /* -------------------------------
+     🟦 Load and save input on mount
+  -------------------------------- */
+  useEffect(() => {
+    const saved = localStorage.getItem("json_input_value");
+    if (saved) {
+      setState((prev) => ({
         ...prev,
-        jsonObjects: [],
-        error: 'Please enter some text to process',
-        isProcessing: false
+        inputText: saved,
       }));
-      return;
     }
+  }, []);
 
-    setState(prev => ({
-      ...prev,
-      isProcessing: true,
-      error: null
-    }));
+  useEffect(() => {
+    localStorage.setItem("json_input_value", state.inputText);
+  }, [state.inputText]);
 
-    try {
-      // Simulate processing delay for better UX
-      await new Promise(resolve => setTimeout(resolve, 500));
+  /* -------------------------------
+     Local Storage ends here
+  -------------------------------- */
 
-      const jsonObjects = processor.extractJSONObjects(inputText, moliMode);
-
-      // Test the parsed JSON by logging it for debugging
-      if (jsonObjects.length > 0) {
-        console.log('JSON parsing results:', {
-          count: jsonObjects.length,
-          firstObjectKeys: jsonObjects[0]?.parsedData ? Object.keys(jsonObjects[0].parsedData) : 'null',
-          firstObjectValid: jsonObjects[0]?.isValid || false
-        });
-      }
-
-      if (jsonObjects.length === 0) {
-        setState(prev => ({
+  const processJSON = useCallback(
+    async (inputText: string) => {
+      if (!inputText.trim()) {
+        setState((prev) => ({
           ...prev,
           jsonObjects: [],
-          error: 'No JSON objects found in the input text',
-          isProcessing: false
+          error: "Please enter some text to process",
+          isProcessing: false,
         }));
         return;
       }
 
-      setState(prev => ({
+      setState((prev) => ({
         ...prev,
-        jsonObjects,
-        isProcessing: false,
-        error: null
+        isProcessing: true,
+        error: null,
       }));
-    } catch (error) {
-      setState(prev => ({
-        ...prev,
-        error: error instanceof Error ? error.message : 'An unknown error occurred',
-        isProcessing: false
-      }));
-    }
-  }, [processor]);
+
+      try {
+        // Simulate processing delay for better UX
+        await new Promise((resolve) => setTimeout(resolve, 500));
+
+        const jsonObjects = processor.extractJSONObjects(inputText, moliMode);
+
+        // Test the parsed JSON by logging it for debugging
+        if (jsonObjects.length > 0) {
+          console.log("JSON parsing results:", {
+            count: jsonObjects.length,
+            firstObjectKeys: jsonObjects[0]?.parsedData
+              ? Object.keys(jsonObjects[0].parsedData)
+              : "null",
+            firstObjectValid: jsonObjects[0]?.isValid || false,
+          });
+        }
+
+        if (jsonObjects.length === 0) {
+          setState((prev) => ({
+            ...prev,
+            jsonObjects: [],
+            error: "No JSON objects found in the input text",
+            isProcessing: false,
+          }));
+          return;
+        }
+
+        setState((prev) => ({
+          ...prev,
+          jsonObjects,
+          isProcessing: false,
+          error: null,
+        }));
+      } catch (error) {
+        setState((prev) => ({
+          ...prev,
+          error:
+            error instanceof Error
+              ? error.message
+              : "An unknown error occurred",
+          isProcessing: false,
+        }));
+      }
+    },
+    [processor]
+  );
 
   const setInputText = useCallback((text: string) => {
-    setState(prev => ({
+    setState((prev) => ({
       ...prev,
-      inputText: text
+      inputText: text,
     }));
   }, []);
 
   const clearResults = useCallback(() => {
-    setState(prev => ({
+    setState((prev) => ({
       ...prev,
       jsonObjects: [],
-      error: null
+      error: null,
     }));
   }, []);
 
   const exportAllAsJSON = useCallback(() => {
-    const validObjects = state.jsonObjects.filter(obj => obj.isValid);
-    const data = validObjects.map(obj => obj.parsedData);
+    const validObjects = state.jsonObjects.filter((obj) => obj.isValid);
+    const data = validObjects.map((obj) => obj.parsedData);
     return JSON.stringify(data, null, 2);
   }, [state.jsonObjects]);
 
@@ -100,23 +129,27 @@ export function useJSONProcessor() {
       const processor = new JSONProcessor();
       const tabularData = processor.generateTabularData(jsonObj.parsedData);
 
-      tabularData.forEach(row => {
+      tabularData.forEach((row) => {
         allTabularData.push({
           jsonObject: index + 1,
-          ...row
+          ...row,
         });
       });
     });
 
-    const headers = ['JSON Object', 'Path', 'Value', 'Type', 'Size'];
-    const csvRows = [headers.join(',')];
+    const headers = ["JSON Object", "Path", "Value", "Type", "Size"];
+    const csvRows = [headers.join(",")];
 
-    allTabularData.forEach(row => {
+    allTabularData.forEach((row) => {
       const value = String(row.value).replace(/"/g, '""');
-      csvRows.push(`${row.jsonObject},"${row.path}","${value}","${row.type}",${row.size || ''}`);
+      csvRows.push(
+        `${row.jsonObject},"${row.path}","${value}","${row.type}",${
+          row.size || ""
+        }`
+      );
     });
 
-    return csvRows.join('\n');
+    return csvRows.join("\n");
   }, [state.jsonObjects]);
 
   return {
@@ -128,6 +161,6 @@ export function useJSONProcessor() {
     clearResults,
     exportAllAsJSON,
     exportAllAsCSV,
-    processor
+    processor,
   };
 }

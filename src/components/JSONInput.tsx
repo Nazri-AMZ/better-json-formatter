@@ -1,7 +1,7 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { Loader2, FileText, Zap } from 'lucide-react';
+import { useState } from "react";
+import { Loader2, FileText, Zap } from "lucide-react";
 
 interface JSONInputProps {
   value: string;
@@ -18,7 +18,9 @@ export default function JSONInput({
   onProcess,
   isProcessing,
   moliMode,
-  placeholder = moliMode ? "Paste MOLI request/response logs here..." : "Paste your JSON or request/response logs here... Multiple JSON objects are supported, even if embedded in text."
+  placeholder = moliMode
+    ? "Paste MOLI request/response logs here..."
+    : "Paste your JSON or request/response logs here... Multiple JSON objects are supported, even if embedded in text.",
 }: JSONInputProps) {
   const [charCount, setCharCount] = useState(0);
   const [lineCount, setLineCount] = useState(1);
@@ -27,11 +29,11 @@ export default function JSONInput({
     const newValue = e.target.value;
     onChange(newValue);
     setCharCount(newValue.length);
-    setLineCount(newValue.split('\n').length);
+    setLineCount(newValue.split("\n").length);
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
-    if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+    if ((e.ctrlKey || e.metaKey) && e.key === "Enter") {
       e.preventDefault();
       onProcess();
     }
@@ -53,7 +55,8 @@ export default function JSONInput({
         <div className="flex items-center gap-2">
           <FileText className="w-5 h-5 text-gray-600" />
           <h3 className="font-semibold text-gray-900">
-            Input {moliMode && <span className="text-blue-600">(MOLI Mode)</span>}
+            Input{" "}
+            {moliMode && <span className="text-blue-600">(MOLI Mode)</span>}
           </h3>
         </div>
         <div className="flex items-center gap-4 text-sm text-gray-600">
@@ -74,7 +77,7 @@ export default function JSONInput({
           onChange={handleTextChange}
           onKeyDown={handleKeyDown}
           placeholder={placeholder}
-          className="w-full h-full p-4 font-mono text-sm bg-gray-50 border border-gray-300 rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 placeholder-gray-600"
+          className="w-full h-full min-h-[40vh] md:min-h-0 p-4 font-mono text-sm bg-gray-50 border border-gray-300 rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 placeholder-gray-600"
         />
       </div>
 
@@ -94,7 +97,7 @@ export default function JSONInput({
         <div className="flex items-center gap-3">
           {value && (
             <button
-              onClick={() => onChange('')}
+              onClick={() => onChange("")}
               disabled={isProcessing}
               className="px-3 py-2 text-sm font-medium text-gray-900 bg-white border border-gray-300 rounded-md hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
@@ -127,13 +130,16 @@ export default function JSONInput({
         <p>
           {moliMode ? (
             <>
-              <strong className="text-gray-900">MOLI Tips:</strong> Press Ctrl+Enter to process • Each log entry will be processed separately •
-              Recovers incomplete JSON objects • Handles mixed content with text separators
+              <strong className="text-gray-900">MOLI Tips:</strong> Press
+              Ctrl+Enter to process • Each log entry will be processed
+              separately • Recovers incomplete JSON objects • Handles mixed
+              content with text separators
             </>
           ) : (
             <>
-              <strong className="text-gray-900">Tips:</strong> Press Ctrl+Enter to process • Supports multiple JSON objects •
-              Recovers from common formatting errors • Handles JSON embedded in logs
+              <strong className="text-gray-900">Tips:</strong> Press Ctrl+Enter
+              to process • Supports multiple JSON objects • Recovers from common
+              formatting errors • Handles JSON embedded in logs
             </>
           )}
         </p>
